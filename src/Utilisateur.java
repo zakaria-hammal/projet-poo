@@ -1,4 +1,5 @@
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -6,22 +7,25 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 public class Utilisateur implements Serializable {
-    private String username;
+    private final String username;
     private String password;
     private String nom;
     private String prenom;
-    private int matricule;
+    private String matricule;
     private double reputation = 2.5;
     private Profil profil;
 
-    public Utilisateur(String nom, String prenom, int mat, double rep) {
+    public Utilisateur(String nom, String prenom, String username, String password, String mat, double rep) {
         this.nom = nom;
         this.prenom = prenom;
+        this.username = username;
+        this.password = password;
         this.matricule = mat;
         this.reputation = rep;
     }
 
     // Getteurs :
+
     public String getNom() {
         return this.nom;
     }
@@ -30,7 +34,7 @@ public class Utilisateur implements Serializable {
         return this.prenom;
     }
 
-    public int getMatricule() {
+    public String getMatricule() {
         return this.matricule;
     }
 
@@ -51,16 +55,22 @@ public class Utilisateur implements Serializable {
         this.prenom = prenom;
     }
 
-    public void setMatricule(int mat) {
+    public void setMatricule(String mat) {
         this.matricule = mat;
     }
 
-    public void setReputation(int rep) {
+    public void setReputation(double rep) {
         this.reputation = rep;
     }
 
     public void setProfil(Profil profil) {
         this.profil = profil;
+    }
+
+    public void setPassword(String oldPassword, String newPassword) {
+        if (this.password.equals(oldPassword)) {
+            this.password = newPassword;
+        }
     }
 
     // Fin des accesseurs
@@ -72,32 +82,53 @@ public class Utilisateur implements Serializable {
         try {
             Utilisateur utilisateur;
             File file = new File("../FichiersDeSauvegarde/fichierATS");
-            if(file.length() != 0) {
+            if(file.exists() && file.length() != 0) {
+                System.out.println("Something");
                 out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
-                while ((utilisateur = (ATS) out.readObject()) != null) {
-                    if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
-                        return utilisateur;
+                while (true) {
+                    try {
+                        utilisateur = (ATS) out.readObject();
+                        if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
+                            return utilisateur;
+                        }
+                    } catch (EOFException e) {
+                        break;
                     }
+            
                 }
             }
             else {
                 file = new File("../FichiersDeSauvegarde/fichierEnseignant");
-                if(file.length() != 0) {
+                if(file.exists() && file.length() != 0) {
+                    System.out.println("Something");
                     out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
-                    while ((utilisateur = (Enseignant) out.readObject()) != null) {
-                        if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
-                            return utilisateur;
+                    while (true) {
+                        try {
+                            utilisateur = (ATS) out.readObject();
+                            if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
+                                return utilisateur;
+                            }
+                        } catch (EOFException e) {
+                            break;
                         }
+                
                     }
                 }
                 else {
                     file = new File("../FichiersDeSauvegarde/fichierEnseignant");
-                    if(file.length() != 0) {
+                    if(file.exists() &&  file.length() != 0) {
+                        System.out.println("Something");
                         out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
-                        while ((utilisateur = (Etudiant) out.readObject()) != null) {
-                            if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
-                                return utilisateur;
+                        while (true) {
+                            try {
+                                utilisateur = (ATS) out.readObject();
+                                if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
+                                    return utilisateur;
+                                }
+                            } catch (EOFException e) {
+                                break;
                             }
+                    
                         }
                     }
                 }
