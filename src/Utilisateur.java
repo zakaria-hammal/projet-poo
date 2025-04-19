@@ -67,10 +67,13 @@ public class Utilisateur implements Serializable {
         this.profil = profil;
     }
 
-    public void setPassword(String oldPassword, String newPassword) {
+    public int setPassword(String oldPassword, String newPassword) {
         if (this.password.equals(oldPassword)) {
             this.password = newPassword;
+            return 0;
         }
+
+        return -1;
     }
 
     // Fin des accesseurs
