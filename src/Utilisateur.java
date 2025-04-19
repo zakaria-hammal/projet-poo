@@ -1,7 +1,12 @@
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 public class Utilisateur implements Serializable {
+    private String username;
+    private String password;
     private String nom;
     private String prenom;
     private int matricule;
@@ -51,17 +56,47 @@ public class Utilisateur implements Serializable {
 
     // Fin des accesseurs
 
-    /* à terminer
-    public static Utilisateur login() {
-        ObjectOutputStream out;
+    /* à terminer*/
+    public static Utilisateur login(String username, String password) {
+        ObjectInputStream out;
 
         try {
-            FileOutputStream fos = new FileOutputStream("../FichiersDeSauvgarde/fichiersATS");    
-            out = new ObjectOutputStream(fos);
-        } catch (Exception e) {
-            System.out.println("Erreur Systeme");
+            Utilisateur utilisateur;
+
+            out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
+            if(out.available() != 0) {
+                while ((utilisateur = (ATS) out.readObject()) != null) {
+                    if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
+                        return utilisateur;
+                    }
+                }
+            }
+            else {
+                out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
+                if(out.available() != 0) {
+                    while ((utilisateur = (Enseignant) out.readObject()) != null) {
+                        if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
+                            return utilisateur;
+                        }
+                    }
+                }
+                else {
+                    out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
+                    if(out.available() != 0) {
+                        while ((utilisateur = (Etudiant) out.readObject()) != null) {
+                            if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
+                                return utilisateur;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }
-    */
+    
 }
