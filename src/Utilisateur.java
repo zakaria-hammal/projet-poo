@@ -1,4 +1,5 @@
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -37,6 +38,10 @@ public class Utilisateur implements Serializable {
         return this.reputation;
     }
 
+    public Profil getProfil() {
+        return this.profil;
+    }
+
     // Setteurs :
     public void setNom(String nom) {
         this.nom = nom;
@@ -54,6 +59,10 @@ public class Utilisateur implements Serializable {
         this.reputation = rep;
     }
 
+    public void setProfil(Profil profil) {
+        this.profil = profil;
+    }
+
     // Fin des accesseurs
 
     /* à terminer*/
@@ -62,9 +71,9 @@ public class Utilisateur implements Serializable {
 
         try {
             Utilisateur utilisateur;
-
-            out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
-            if(out.available() != 0) {
+            File file = new File("../FichiersDeSauvegarde/fichierATS");
+            if(file.length() != 0) {
+                out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
                 while ((utilisateur = (ATS) out.readObject()) != null) {
                     if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
                         return utilisateur;
@@ -72,8 +81,9 @@ public class Utilisateur implements Serializable {
                 }
             }
             else {
-                out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
-                if(out.available() != 0) {
+                file = new File("../FichiersDeSauvegarde/fichierEnseignant");
+                if(file.length() != 0) {
+                    out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
                     while ((utilisateur = (Enseignant) out.readObject()) != null) {
                         if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
                             return utilisateur;
@@ -81,8 +91,9 @@ public class Utilisateur implements Serializable {
                     }
                 }
                 else {
-                    out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
-                    if(out.available() != 0) {
+                    file = new File("../FichiersDeSauvegarde/fichierEnseignant");
+                    if(file.length() != 0) {
+                        out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
                         while ((utilisateur = (Etudiant) out.readObject()) != null) {
                             if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
                                 return utilisateur;
