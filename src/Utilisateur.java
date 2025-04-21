@@ -46,6 +46,14 @@ public class Utilisateur implements Serializable {
         return this.profil;
     }
 
+    public String getUsername(ATS admin) {
+        if(admin == null) {
+            return null;
+        }
+
+        return this.username;
+    }
+
     // Setteurs :
     public void setNom(String nom) {
         this.nom = nom;
@@ -78,7 +86,6 @@ public class Utilisateur implements Serializable {
 
     // Fin des accesseurs
 
-    /* à terminer*/
     public static Utilisateur login(String username, String password) {
         ObjectInputStream out;
 
