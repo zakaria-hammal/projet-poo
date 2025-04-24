@@ -9,18 +9,17 @@ import java.io.Serializable;
 public class Utilisateur implements Serializable {
     private static int nb_utilisateur;
 
-    private final String username;
     private String password;
     private String nom;
     private String prenom;
-    private String matricule;
+    private final String matricule;
     private double reputation = 2.5;
     private Profil profil;
+    private int nb_courses = 0;
 
-    public Utilisateur(String nom, String prenom, String username, String password, String mat, double rep) {
+    public Utilisateur(String nom, String prenom, String password, String mat, double rep) {
         this.nom = nom;
         this.prenom = prenom;
-        this.username = username;
         this.password = password;
         this.matricule = mat;
         this.reputation = rep;
@@ -48,16 +47,12 @@ public class Utilisateur implements Serializable {
         return this.profil;
     }
 
-    public String getUsername(ATS admin) {
-        if(admin == null) {
-            return null;
-        }
-
-        return this.username;
-    }
-
     public static int getNb_utilisateur() {
         return nb_utilisateur;
+    }
+
+    public int getNb_courses() {
+        return nb_courses;
     }
 
     // Setteurs :
@@ -69,12 +64,15 @@ public class Utilisateur implements Serializable {
         this.prenom = prenom;
     }
 
-    public void setMatricule(String mat) {
-        this.matricule = mat;
-    }
+    public int newRating(Course course, double note) {
+        if(course == null) {
+            return -1;
+        }
 
-    public void setReputation(double rep) {
-        this.reputation = rep;
+        this.reputation = (this.reputation * this.nb_courses + note) / (this.nb_courses + 1);
+        this.nb_courses++;
+
+        return 0;
     }
 
     public void setProfil(Profil profil) {
@@ -92,7 +90,7 @@ public class Utilisateur implements Serializable {
 
     // Fin des accesseurs
 
-    public static Utilisateur login(String username, String password) {
+    public static Utilisateur login(String matricule, String password) {
         ObjectInputStream out;
 
         try {
@@ -105,7 +103,7 @@ public class Utilisateur implements Serializable {
                 while (true) {
                     try {
                         utilisateur = (Utilisateur) out.readObject();
-                        if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                             return (ATS) utilisateur;
                         }
                     } catch (EOFException e) {
@@ -122,7 +120,7 @@ public class Utilisateur implements Serializable {
                     while (true) {
                         try {
                             utilisateur = (Utilisateur) out.readObject();
-                            if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
+                            if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                                 return (Enseignant) utilisateur;
                             }
                         } catch (EOFException e) {
@@ -139,7 +137,7 @@ public class Utilisateur implements Serializable {
                         while (true) {
                             try {
                                 utilisateur = (Utilisateur) out.readObject();
-                                if (utilisateur.username.equals(username) && utilisateur.password.equals(password)) {
+                                if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                                     return (Etudiant) utilisateur;
                                 }
                             } catch (EOFException e) {
