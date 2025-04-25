@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class Utilisateur implements Serializable {
     private static int nb_utilisateur;
@@ -13,16 +14,39 @@ public class Utilisateur implements Serializable {
     private String nom;
     private String prenom;
     private final String matricule;
-    private double reputation = 2.5;
+    private double reputationChauffeur = 2.5;
+    private double reputationPassager = 2.5;
     private Profil profil;
-    private int nb_courses = 0;
+    private int nb_coursesChauffeur = 0;
+    private int nb_coursesPassager = 0;
 
-    public Utilisateur(String nom, String prenom, String password, String mat, double rep) {
+    public Utilisateur(String nom, String prenom, String password, String mat, double repC, double repP) throws MatriculeException {
+        if (mat.length() == 0 || mat.length() > 13) {
+            throw new MatriculeException("Taille du matricule invalide");
+        }
+
+        for (int i = 0; i < 13; i++) {
+            if ((mat.charAt(i) > '9') || (mat.charAt(i) < '0')) {
+                throw new MatriculeException("Matricule Invalide : Matricule contient de caracteres interdits");
+            }
+        }
+
+        if (mat.charAt(0) != '0' || mat.charAt(0) != '1' || mat.charAt(0) != '2') {
+            throw new MatriculeException("Matricule Invalide : Type d'utilisateur introuvable");
+        }
+
+        int annee = Integer.getInteger(String.valueOf(mat.charAt(1)) + mat.charAt(2) + mat.charAt(3) + mat.charAt(4));
+
+        if (annee > LocalDate.now().getYear()) {
+            throw new MatriculeException("Matricule Invalide : Annee de recutement ne peut pas dépasser l'annee actuelle");
+        }
+
         this.nom = nom;
         this.prenom = prenom;
         this.password = password;
         this.matricule = mat;
-        this.reputation = rep;
+        this.reputationChauffeur = repC;
+        this.reputationPassager = repP;
     }
 
     // Getteurs :
@@ -40,7 +64,19 @@ public class Utilisateur implements Serializable {
     }
 
     public double getReputation() {
-        return this.reputation;
+        if(nb_coursesChauffeur + nb_coursesPassager == 0) {
+            return 2.5;
+        } 
+
+        return ((nb_coursesChauffeur * reputationChauffeur + nb_coursesPassager * reputationPassager) / (nb_coursesChauffeur + nb_coursesPassager));
+    }
+
+    public double getReputationChauffeur() {
+        return this.reputationChauffeur;
+    }
+
+    public double getReputationPassager() {
+        return this.reputationPassager;
     }
 
     public Profil getProfil() {
@@ -52,7 +88,15 @@ public class Utilisateur implements Serializable {
     }
 
     public int getNb_courses() {
-        return nb_courses;
+        return nb_coursesChauffeur + nb_coursesPassager;
+    }
+
+    public int getNb_coursesChauffeur() {
+        return this.nb_coursesChauffeur;
+    }
+
+    public int getNb_coursesPassager() {
+        return this.nb_coursesPassager;
     }
 
     // Setteurs :
@@ -64,16 +108,29 @@ public class Utilisateur implements Serializable {
         this.prenom = prenom;
     }
 
-    public int newRating(Course course, double note) {
+    
+    public int newRatingChauffeur(Course course, double note) {
         if(course == null) {
             return -1;
         }
 
-        this.reputation = (this.reputation * this.nb_courses + note) / (this.nb_courses + 1);
-        this.nb_courses++;
+        this.reputationChauffeur = (this.reputationChauffeur * this.nb_coursesChauffeur + note) / (this.nb_coursesChauffeur + 1);
+        this.nb_coursesChauffeur++;
 
         return 0;
     }
+
+    public int newRatingPassager(Course course, double note) {
+        if(course == null) {
+            return -1;
+        }
+
+        this.reputationPassager = (this.reputationPassager * this.nb_coursesPassager + note) / (this.nb_coursesPassager + 1);
+        this.nb_coursesPassager++;
+
+        return 0;
+    }
+
 
     public void setProfil(Profil profil) {
         this.profil = profil;
@@ -98,7 +155,6 @@ public class Utilisateur implements Serializable {
             File file = new File("../FichiersDeSauvegarde/fichierATS");
             
             if(file.exists() && file.length() != 0) {
-                System.out.println("Something");
                 out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
                 while (true) {
                     try {
@@ -115,7 +171,6 @@ public class Utilisateur implements Serializable {
             else {
                 file = new File("../FichiersDeSauvegarde/fichierEnseignant");
                 if(file.exists() && file.length() != 0) {
-                    System.out.println("Something");
                     out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
                     while (true) {
                         try {
@@ -132,7 +187,6 @@ public class Utilisateur implements Serializable {
                 else {
                     file = new File("../FichiersDeSauvegarde/fichierEnseignant");
                     if(file.exists() &&  file.length() != 0) {
-                        System.out.println("Something");
                         out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
                         while (true) {
                             try {
