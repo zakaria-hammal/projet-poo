@@ -147,30 +147,55 @@ public class Utilisateur implements Serializable {
 
     // Fin des accesseurs
 
-    public static Utilisateur login(String matricule, String password) {
+    public static Utilisateur login(String matricule, String password) throws IOException, ClassNotFoundException {
         ObjectInputStream out;
+        Utilisateur utilisateur;
+        File file;
 
-        try {
-            Utilisateur utilisateur;
-            File file = new File("../FichiersDeSauvegarde/fichierATS");
-            
-            if(file.exists() && file.length() != 0) {
-                out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
-                while (true) {
-                    try {
-                        utilisateur = (Utilisateur) out.readObject();
-                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                            return (ATS) utilisateur;
+        switch (matricule.charAt(0)) {
+            case '0' -> { 
+                file = new File("../FichiersDeSauvegarde/fichierATS");
+                if(!file.exists() && file.length() != 0) {
+                    out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
+                    while (true) {
+                        try {
+                            utilisateur = (Utilisateur) out.readObject();
+                            if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                                return (ATS) utilisateur;
+                            }
+                        } catch (EOFException e) {
+                            break;
                         }
-                    } catch (EOFException e) {
-                        break;
+                
                     }
-            
                 }
+
+                return null;
             }
-            else {
+        
+            case '1' -> {
+                file = new File("../FichiersDeSauvegarde/fichierEtudiant");
+                if(!file.exists() && file.length() != 0) {
+                    out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
+                    while (true) {
+                        try {
+                            utilisateur = (Utilisateur) out.readObject();
+                            if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                                return (Etudiant) utilisateur;
+                            }
+                        } catch (EOFException e) {
+                            break;
+                        }
+                
+                    }
+                }
+
+                return null;
+            }
+
+            case '2' -> {
                 file = new File("../FichiersDeSauvegarde/fichierEnseignant");
-                if(file.exists() && file.length() != 0) {
+                if(!file.exists() && file.length() != 0) {
                     out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
                     while (true) {
                         try {
@@ -184,30 +209,12 @@ public class Utilisateur implements Serializable {
                 
                     }
                 }
-                else {
-                    file = new File("../FichiersDeSauvegarde/fichierEnseignant");
-                    if(file.exists() &&  file.length() != 0) {
-                        out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
-                        while (true) {
-                            try {
-                                utilisateur = (Utilisateur) out.readObject();
-                                if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                                    return (Etudiant) utilisateur;
-                                }
-                            } catch (EOFException e) {
-                                break;
-                            }
-                    
-                        }
-                    }
-                }
-            }
 
-            return null;
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            return null;
+                return null;
+            }
         }
+
+        return null;
     }
     
 }
