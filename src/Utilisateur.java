@@ -27,15 +27,15 @@ public class Utilisateur implements Serializable {
 
         for (int i = 0; i < 13; i++) {
             if ((mat.charAt(i) > '9') || (mat.charAt(i) < '0')) {
-                throw new MatriculeException("Matricule Invalide : Matricule contient de caracteres interdits");
+                throw new MatriculeException("Matricule Invalide : Matricule contient des caracteres interdits");
             }
         }
 
-        if (mat.charAt(0) != '0' || mat.charAt(0) != '1' || mat.charAt(0) != '2') {
+        if (mat.charAt(0) != '0' && mat.charAt(0) != '1' && mat.charAt(0) != '2') {
             throw new MatriculeException("Matricule Invalide : Type d'utilisateur introuvable");
         }
 
-        int annee = Integer.getInteger(String.valueOf(mat.charAt(1)) + mat.charAt(2) + mat.charAt(3) + mat.charAt(4));
+        int annee = Integer.parseInt(String.valueOf(mat.charAt(1)) + mat.charAt(2) + mat.charAt(3) + mat.charAt(4));
 
         if (annee > LocalDate.now().getYear()) {
             throw new MatriculeException("Matricule Invalide : Annee de recutement ne peut pas dépasser l'annee actuelle");
