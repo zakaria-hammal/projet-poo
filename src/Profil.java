@@ -7,12 +7,14 @@ public class Profil {
     private Point itenairairePassager;
     private ArrayList<Point> itenairaireChauffeur;
     private ArrayList<LocalDate>[] horaires;
+    private TypeCourse typeCourse;
 
-    public Profil(Status stat, Point itPass, ArrayList<Point> itChauf, ArrayList<LocalDate>[] hor) {
+    public Profil(Status stat, Point itPass, ArrayList<Point> itChauf, ArrayList<LocalDate>[] hor, TypeCourse typeCourse) {
         this.status = stat;
         this.itenairairePassager = itPass;
         this.itenairaireChauffeur = itChauf;
         this.horaires = hor;
+        this.typeCourse = typeCourse;
     }
 
     // getteurs :
@@ -33,6 +35,10 @@ public class Profil {
         return horaires;
     }
 
+    public TypeCourse getTypeCourse() {
+        return typeCourse;
+    }
+
     // setteurs :
 
     public void setStatus(Status status) {
@@ -49,6 +55,10 @@ public class Profil {
 
     public void setHoraires(ArrayList<LocalDate>[] horaires) {
         this.horaires = horaires;
+    }
+
+    public void setTypeCourse(TypeCourse typeCourse) {
+        this.typeCourse = typeCourse;
     }
 
     

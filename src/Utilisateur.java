@@ -20,7 +20,7 @@ public class Utilisateur implements Serializable {
     private int nb_coursesChauffeur = 0;
     private int nb_coursesPassager = 0;
 
-    public Utilisateur(String nom, String prenom, String password, String mat, double repC, double repP) throws MatriculeException {
+    public Utilisateur(String nom, String prenom, String password, String mat, double repC, double repP) throws MatriculeException, ReputationException {
         if (mat.length() == 0 || mat.length() > 13) {
             throw new MatriculeException("Taille du matricule invalide");
         }
@@ -39,6 +39,10 @@ public class Utilisateur implements Serializable {
 
         if (annee > LocalDate.now().getYear()) {
             throw new MatriculeException("Matricule Invalide : Annee de recutement ne peut pas dépasser l'annee actuelle");
+        }
+
+        if(repC < 0 || repC > 5 || repP < 0 || repP > 5) {
+            throw new ReputationException("Reputation doit etre entre 0 et 5");
         }
 
         this.nom = nom;
@@ -107,7 +111,6 @@ public class Utilisateur implements Serializable {
     public void setPrenom(String prenom) {
         this.prenom = prenom;
     }
-
     
     public int newRatingChauffeur(Course course, double note) {
         if(course == null) {
