@@ -151,7 +151,7 @@ public class Utilisateur implements Serializable {
     // Fin des accesseurs
 
     public static Utilisateur login(String matricule, String password) throws IOException, ClassNotFoundException {
-        ObjectInputStream out;
+        ObjectInputStream in;
         Utilisateur utilisateur;
         File file;
 
@@ -159,10 +159,10 @@ public class Utilisateur implements Serializable {
             case '0' -> { 
                 file = new File("../FichiersDeSauvegarde/fichierATS");
                 if(!file.exists() && file.length() != 0) {
-                    out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
+                    in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
                     while (true) {
                         try {
-                            utilisateur = (Utilisateur) out.readObject();
+                            utilisateur = (Utilisateur) in.readObject();
                             if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                                 return (ATS) utilisateur;
                             }
@@ -179,10 +179,10 @@ public class Utilisateur implements Serializable {
             case '1' -> {
                 file = new File("../FichiersDeSauvegarde/fichierEtudiant");
                 if(!file.exists() && file.length() != 0) {
-                    out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
+                    in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
                     while (true) {
                         try {
-                            utilisateur = (Utilisateur) out.readObject();
+                            utilisateur = (Utilisateur) in.readObject();
                             if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                                 return (Etudiant) utilisateur;
                             }
@@ -199,10 +199,10 @@ public class Utilisateur implements Serializable {
             case '2' -> {
                 file = new File("../FichiersDeSauvegarde/fichierEnseignant");
                 if(!file.exists() && file.length() != 0) {
-                    out = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
+                    in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
                     while (true) {
                         try {
-                            utilisateur = (Utilisateur) out.readObject();
+                            utilisateur = (Utilisateur) in.readObject();
                             if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                                 return (Enseignant) utilisateur;
                             }
