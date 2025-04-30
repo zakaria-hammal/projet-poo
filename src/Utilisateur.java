@@ -21,7 +21,7 @@ public class Utilisateur implements Serializable {
     private int nb_coursesPassager = 0;
 
     public Utilisateur(String nom, String prenom, String password, String mat, double repC, double repP) throws MatriculeException, ReputationException {
-        if (mat.length() == 0 || mat.length() > 13) {
+        if (mat.length() == 0 || mat.length() != 13) {
             throw new MatriculeException("Taille du matricule invalide");
         }
 
