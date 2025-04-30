@@ -2,8 +2,10 @@
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -112,7 +114,7 @@ public class Utilisateur implements Serializable {
         this.prenom = prenom;
     }
     
-    public int newRatingChauffeur(Course course, double note) {
+    public int newRatingChauffeur(Course course, double note) throws IOException, MatriculeException, ClassNotFoundException {
         if(course == null) {
             return -1;
         }
@@ -120,16 +122,252 @@ public class Utilisateur implements Serializable {
         this.reputationChauffeur = (this.reputationChauffeur * this.nb_coursesChauffeur + note) / (this.nb_coursesChauffeur + 1);
         this.nb_coursesChauffeur++;
 
+        File temp = new File("FichiersDeSauvegarde/temp");
+        temp.createNewFile();
+        Utilisateur utilisateur;
+        ObjectInputStream in;
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/temp"));
+        
+        switch (this.matricule.charAt(0)) {
+            case '0' -> { 
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/fichierATS"));
+                while (true) {
+                    try {
+                        utilisateur = (ATS) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
+                            utilisateur.reputationChauffeur = this.reputationChauffeur;
+                        }
+                        out.writeObject((ATS) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+
+                while (true) {
+                    try {
+                        utilisateur = (ATS) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
+                            utilisateur.reputationChauffeur = this.reputationChauffeur;
+                        }
+                        out.writeObject((ATS) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+            }
+            
+            case '1' -> { 
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/fichierEtudiant"));
+
+                while (true) {
+                    try {
+                        utilisateur = (Etudiant) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
+                            utilisateur.reputationChauffeur = this.reputationChauffeur;
+                        }
+                        out.writeObject((Etudiant) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+                    
+                }
+
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+
+                while (true) {
+                    try {
+                        utilisateur = (ATS) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
+                            utilisateur.reputationChauffeur = this.reputationChauffeur;
+                        }
+                        out.writeObject((ATS) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+            }
+
+            case '2' -> {
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/fichierEnseignant"));
+                while (true) {
+                    try {
+                        utilisateur = (Enseignant) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
+                            utilisateur.reputationChauffeur = this.reputationChauffeur;
+                        }
+                        out.writeObject((Enseignant) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+
+                while (true) {
+                    try {
+                        utilisateur = (ATS) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
+                            utilisateur.reputationChauffeur = this.reputationChauffeur;
+                        }
+                        out.writeObject((ATS) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+            }
+
+            default -> {
+                temp.delete();
+                throw new MatriculeException("Matricule Invalide : Type d'utilisateur introuvable");
+            }
+        }
+
+        temp.delete();
+
         return 0;
     }
 
-    public int newRatingPassager(Course course, double note) {
+    public int newRatingPassager(Course course, double note) throws  IOException, MatriculeException, ClassNotFoundException{
         if(course == null) {
             return -1;
         }
 
         this.reputationPassager = (this.reputationPassager * this.nb_coursesPassager + note) / (this.nb_coursesPassager + 1);
         this.nb_coursesPassager++;
+
+        File temp = new File("FichiersDeSauvegarde/temp");
+        temp.createNewFile();
+        Utilisateur utilisateur;
+        ObjectInputStream in;
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/temp"));
+        
+        switch (this.matricule.charAt(0)) {
+            case '0' -> { 
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/fichierATS"));
+                while (true) {
+                    try {
+                        utilisateur = (ATS) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
+                            utilisateur.reputationPassager = this.reputationPassager;
+                        }
+                        out.writeObject((ATS) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+
+                while (true) {
+                    try {
+                        utilisateur = (ATS) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
+                            utilisateur.reputationPassager = this.reputationPassager;
+                        }
+                        out.writeObject((ATS) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+            }
+            
+            case '1' -> { 
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/fichierEtudiant"));
+
+                while (true) {
+                    try {
+                        utilisateur = (Etudiant) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
+                            utilisateur.reputationPassager = this.reputationPassager;
+                        }
+                        out.writeObject((Etudiant) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+                    
+                }
+
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+
+                while (true) {
+                    try {
+                        utilisateur = (ATS) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
+                            utilisateur.reputationPassager = this.reputationPassager;
+                        }
+                        out.writeObject((ATS) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+            }
+
+            case '2' -> {
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/fichierEnseignant"));
+                while (true) {
+                    try {
+                        utilisateur = (Enseignant) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
+                            utilisateur.reputationPassager = this.reputationPassager;
+                        }
+                        out.writeObject((Enseignant) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+
+                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+
+                while (true) {
+                    try {
+                        utilisateur = (ATS) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
+                            utilisateur.reputationPassager = this.reputationPassager;
+                        }
+                        out.writeObject((ATS) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+            
+                }
+            }
+
+            default -> {
+                temp.delete();
+                throw new MatriculeException("Matricule Invalide : Type d'utilisateur introuvable");
+            }
+        }
+
+        temp.delete();
 
         return 0;
     }
@@ -162,7 +400,7 @@ public class Utilisateur implements Serializable {
                     in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
                     while (true) {
                         try {
-                            utilisateur = (Utilisateur) in.readObject();
+                            utilisateur = (ATS) in.readObject();
                             if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                                 return (ATS) utilisateur;
                             }
@@ -182,7 +420,7 @@ public class Utilisateur implements Serializable {
                     in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
                     while (true) {
                         try {
-                            utilisateur = (Utilisateur) in.readObject();
+                            utilisateur = (Etudiant) in.readObject();
                             if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                                 return (Etudiant) utilisateur;
                             }
@@ -202,7 +440,7 @@ public class Utilisateur implements Serializable {
                     in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
                     while (true) {
                         try {
-                            utilisateur = (Utilisateur) in.readObject();
+                            utilisateur = (Enseignant) in.readObject();
                             if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                                 return (Enseignant) utilisateur;
                             }
