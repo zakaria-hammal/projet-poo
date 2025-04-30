@@ -114,7 +114,7 @@ public class Utilisateur implements Serializable {
         this.prenom = prenom;
     }
     
-    public int newRatingChauffeur(Course course, double note) throws IOException, MatriculeException, ClassNotFoundException {
+    public int newRatingChauffeur(Course course, double note) throws IOException, MatriculeException, ClassNotFoundException, UserNotFoundException {
         if(course == null) {
             return -1;
         }
@@ -127,7 +127,8 @@ public class Utilisateur implements Serializable {
         Utilisateur utilisateur;
         ObjectInputStream in;
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/temp"));
-        
+        int n = 0;
+
         switch (this.matricule.charAt(0)) {
             case '0' -> { 
                 in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/fichierATS"));
@@ -137,6 +138,7 @@ public class Utilisateur implements Serializable {
                         if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                             utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
                             utilisateur.reputationChauffeur = this.reputationChauffeur;
+                            n++;
                         }
                         out.writeObject((ATS) utilisateur);
                     } catch (EOFException e) {
@@ -151,10 +153,6 @@ public class Utilisateur implements Serializable {
                 while (true) {
                     try {
                         utilisateur = (ATS) in.readObject();
-                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
-                            utilisateur.reputationChauffeur = this.reputationChauffeur;
-                        }
                         out.writeObject((ATS) utilisateur);
                     } catch (EOFException e) {
                         break;
@@ -172,6 +170,7 @@ public class Utilisateur implements Serializable {
                         if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                             utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
                             utilisateur.reputationChauffeur = this.reputationChauffeur;
+                            n++;
                         }
                         out.writeObject((Etudiant) utilisateur);
                     } catch (EOFException e) {
@@ -181,15 +180,11 @@ public class Utilisateur implements Serializable {
                 }
 
                 in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
-                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierEtudiant"));
 
                 while (true) {
                     try {
                         utilisateur = (ATS) in.readObject();
-                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
-                            utilisateur.reputationChauffeur = this.reputationChauffeur;
-                        }
                         out.writeObject((ATS) utilisateur);
                     } catch (EOFException e) {
                         break;
@@ -215,15 +210,11 @@ public class Utilisateur implements Serializable {
                 }
 
                 in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
-                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierEnseignant"));
 
                 while (true) {
                     try {
                         utilisateur = (ATS) in.readObject();
-                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
-                            utilisateur.reputationChauffeur = this.reputationChauffeur;
-                        }
                         out.writeObject((ATS) utilisateur);
                     } catch (EOFException e) {
                         break;
@@ -240,10 +231,14 @@ public class Utilisateur implements Serializable {
 
         temp.delete();
 
+        if(n == 0) {
+            throw new UserNotFoundException("Utilisateur Introuvable");
+        }
+
         return 0;
     }
 
-    public int newRatingPassager(Course course, double note) throws  IOException, MatriculeException, ClassNotFoundException{
+    public int newRatingPassager(Course course, double note) throws  IOException, MatriculeException, ClassNotFoundException, UserNotFoundException{
         if(course == null) {
             return -1;
         }
@@ -257,6 +252,8 @@ public class Utilisateur implements Serializable {
         ObjectInputStream in;
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/temp"));
         
+        int n = 0;
+
         switch (this.matricule.charAt(0)) {
             case '0' -> { 
                 in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/fichierATS"));
@@ -266,6 +263,7 @@ public class Utilisateur implements Serializable {
                         if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                             utilisateur.nb_coursesPassager = this.nb_coursesPassager;
                             utilisateur.reputationPassager = this.reputationPassager;
+                            n++;
                         }
                         out.writeObject((ATS) utilisateur);
                     } catch (EOFException e) {
@@ -280,10 +278,6 @@ public class Utilisateur implements Serializable {
                 while (true) {
                     try {
                         utilisateur = (ATS) in.readObject();
-                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
-                            utilisateur.reputationPassager = this.reputationPassager;
-                        }
                         out.writeObject((ATS) utilisateur);
                     } catch (EOFException e) {
                         break;
@@ -301,6 +295,7 @@ public class Utilisateur implements Serializable {
                         if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                             utilisateur.nb_coursesPassager = this.nb_coursesPassager;
                             utilisateur.reputationPassager = this.reputationPassager;
+                            n++;
                         }
                         out.writeObject((Etudiant) utilisateur);
                     } catch (EOFException e) {
@@ -310,15 +305,11 @@ public class Utilisateur implements Serializable {
                 }
 
                 in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
-                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierEtudiant"));
 
                 while (true) {
                     try {
                         utilisateur = (ATS) in.readObject();
-                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
-                            utilisateur.reputationPassager = this.reputationPassager;
-                        }
                         out.writeObject((ATS) utilisateur);
                     } catch (EOFException e) {
                         break;
@@ -335,6 +326,7 @@ public class Utilisateur implements Serializable {
                         if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                             utilisateur.nb_coursesPassager = this.nb_coursesPassager;
                             utilisateur.reputationPassager = this.reputationPassager;
+                            n++;
                         }
                         out.writeObject((Enseignant) utilisateur);
                     } catch (EOFException e) {
@@ -344,15 +336,11 @@ public class Utilisateur implements Serializable {
                 }
 
                 in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
-                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
+                out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierEnseignant"));
 
                 while (true) {
                     try {
                         utilisateur = (ATS) in.readObject();
-                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
-                            utilisateur.reputationPassager = this.reputationPassager;
-                        }
                         out.writeObject((ATS) utilisateur);
                     } catch (EOFException e) {
                         break;
@@ -368,6 +356,10 @@ public class Utilisateur implements Serializable {
         }
 
         temp.delete();
+
+        if (n == 0) {
+            throw new UserNotFoundException("Utilisateur Introuvable");
+        }
 
         return 0;
     }
