@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Utilisateur implements Serializable {
     private static int nb_utilisateur;
@@ -33,7 +34,7 @@ public class Utilisateur implements Serializable {
             }
         }
 
-        if (mat.charAt(0) != '0' && mat.charAt(0) != '1' && mat.charAt(0) != '2') {
+        if (mat.charAt(4) != '0' && mat.charAt(4) != '1' && mat.charAt(4) != '2') {
             throw new MatriculeException("Matricule Invalide : Type d'utilisateur introuvable");
         }
 
@@ -122,12 +123,13 @@ public class Utilisateur implements Serializable {
         this.reputationChauffeur = (this.reputationChauffeur * this.nb_coursesChauffeur + note) / (this.nb_coursesChauffeur + 1);
         this.nb_coursesChauffeur++;
 
-        File temp = new File("FichiersDeSauvegarde/temp");
-        temp.createNewFile();
         Utilisateur utilisateur;
         ObjectInputStream in;
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/temp"));
+        ObjectOutputStream out;
+        
         int n = 0;
+
+        ArrayList<Utilisateur> temp = new ArrayList<>();
 
         switch (this.matricule.charAt(0)) {
             case '0' -> { 
@@ -140,24 +142,17 @@ public class Utilisateur implements Serializable {
                             utilisateur.reputationChauffeur = this.reputationChauffeur;
                             n++;
                         }
-                        out.writeObject((ATS) utilisateur);
+                        temp.add((ATS) utilisateur);
                     } catch (EOFException e) {
                         break;
                     }
             
                 }
 
-                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
                 out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
 
-                while (true) {
-                    try {
-                        utilisateur = (ATS) in.readObject();
-                        out.writeObject((ATS) utilisateur);
-                    } catch (EOFException e) {
-                        break;
-                    }
-            
+                for (Utilisateur elem : temp) {
+                    out.writeObject((ATS) elem);
                 }
             }
             
@@ -172,24 +167,17 @@ public class Utilisateur implements Serializable {
                             utilisateur.reputationChauffeur = this.reputationChauffeur;
                             n++;
                         }
-                        out.writeObject((Etudiant) utilisateur);
+                        temp.add((Etudiant) utilisateur);
                     } catch (EOFException e) {
                         break;
                     }
                     
                 }
 
-                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
                 out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierEtudiant"));
 
-                while (true) {
-                    try {
-                        utilisateur = (ATS) in.readObject();
-                        out.writeObject((ATS) utilisateur);
-                    } catch (EOFException e) {
-                        break;
-                    }
-            
+                for (Utilisateur elem : temp) {
+                    out.writeObject((Etudiant) elem);
                 }
             }
 
@@ -201,35 +189,27 @@ public class Utilisateur implements Serializable {
                         if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                             utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
                             utilisateur.reputationChauffeur = this.reputationChauffeur;
+                            n++;
                         }
-                        out.writeObject((Enseignant) utilisateur);
+                        temp.add((Enseignant) utilisateur);
                     } catch (EOFException e) {
                         break;
                     }
             
                 }
 
-                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
                 out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierEnseignant"));
 
-                while (true) {
-                    try {
-                        utilisateur = (ATS) in.readObject();
-                        out.writeObject((ATS) utilisateur);
-                    } catch (EOFException e) {
-                        break;
-                    }
-            
+                for (Utilisateur elem : temp) {
+                    out.writeObject((Enseignant) elem);
                 }
             }
 
             default -> {
-                temp.delete();
                 throw new MatriculeException("Matricule Invalide : Type d'utilisateur introuvable");
             }
         }
 
-        temp.delete();
 
         if(n == 0) {
             throw new UserNotFoundException("Utilisateur Introuvable");
@@ -246,13 +226,13 @@ public class Utilisateur implements Serializable {
         this.reputationPassager = (this.reputationPassager * this.nb_coursesPassager + note) / (this.nb_coursesPassager + 1);
         this.nb_coursesPassager++;
 
-        File temp = new File("FichiersDeSauvegarde/temp");
-        temp.createNewFile();
         Utilisateur utilisateur;
         ObjectInputStream in;
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/temp"));
+        ObjectOutputStream out;
         
         int n = 0;
+
+        ArrayList<Utilisateur> temp = new ArrayList<>();
 
         switch (this.matricule.charAt(0)) {
             case '0' -> { 
@@ -265,24 +245,17 @@ public class Utilisateur implements Serializable {
                             utilisateur.reputationPassager = this.reputationPassager;
                             n++;
                         }
-                        out.writeObject((ATS) utilisateur);
+                        temp.add((ATS) utilisateur);
                     } catch (EOFException e) {
                         break;
                     }
             
                 }
 
-                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
                 out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierATS"));
 
-                while (true) {
-                    try {
-                        utilisateur = (ATS) in.readObject();
-                        out.writeObject((ATS) utilisateur);
-                    } catch (EOFException e) {
-                        break;
-                    }
-            
+                for (Utilisateur elem : temp) {
+                    out.writeObject((ATS) elem);
                 }
             }
             
@@ -297,24 +270,17 @@ public class Utilisateur implements Serializable {
                             utilisateur.reputationPassager = this.reputationPassager;
                             n++;
                         }
-                        out.writeObject((Etudiant) utilisateur);
+                        temp.add((Etudiant) utilisateur);
                     } catch (EOFException e) {
                         break;
                     }
                     
                 }
 
-                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
                 out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierEtudiant"));
 
-                while (true) {
-                    try {
-                        utilisateur = (ATS) in.readObject();
-                        out.writeObject((ATS) utilisateur);
-                    } catch (EOFException e) {
-                        break;
-                    }
-            
+                for (Utilisateur elem : temp) {
+                    out.writeObject((Etudiant) elem);
                 }
             }
 
@@ -328,34 +294,24 @@ public class Utilisateur implements Serializable {
                             utilisateur.reputationPassager = this.reputationPassager;
                             n++;
                         }
-                        out.writeObject((Enseignant) utilisateur);
+                        temp.add((Enseignant) utilisateur);
                     } catch (EOFException e) {
                         break;
                     }
             
                 }
 
-                in = new ObjectInputStream(new FileInputStream("FichiersDeSauvegarde/temp"));
                 out = new ObjectOutputStream(new FileOutputStream("FichiersDeSauvegarde/fichierEnseignant"));
 
-                while (true) {
-                    try {
-                        utilisateur = (ATS) in.readObject();
-                        out.writeObject((ATS) utilisateur);
-                    } catch (EOFException e) {
-                        break;
-                    }
-            
+                for (Utilisateur elem : temp) {
+                    out.writeObject((Enseignant) elem);
                 }
             }
 
             default -> {
-                temp.delete();
                 throw new MatriculeException("Matricule Invalide : Type d'utilisateur introuvable");
             }
         }
-
-        temp.delete();
 
         if (n == 0) {
             throw new UserNotFoundException("Utilisateur Introuvable");
@@ -448,6 +404,11 @@ public class Utilisateur implements Serializable {
         }
 
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return (nom + " " + prenom + " : \nReputation Passager : " + reputationPassager + "\nReputation Chauffeur : " + reputationChauffeur);
     }
     
 }
