@@ -2,15 +2,17 @@ import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class ATS extends Utilisateur {
+public class ATS extends Utilisateur implements Serializable {
     private LocalDate AnneeDeRecrutement;
     private String ServiceDeRattachement;
 
-    public ATS(String nom, String prenom, String username, String password, String mat, double rep, LocalDate adr, String sdr) {
-        super(nom, prenom, username, password, mat, rep);
-        this.ServiceDeRattachement = sdr;
+    public ATS(String nom, String prenom, String password, String mat, double repC, double repP, LocalDate adr, String sdr)
+            throws MatriculeException, ReputationException {
+        super(nom, prenom, password, mat, repC, repP);
         this.AnneeDeRecrutement = adr;
+        this.ServiceDeRattachement = sdr;
     }
+
     //Getters
     public LocalDate getAnneeDeRecrutement() {
         return this.AnneeDeRecrutement;
@@ -28,13 +30,42 @@ public class ATS extends Utilisateur {
         this.ServiceDeRattachement = sdr;
     }
 
-    public void ajouterATS(String matricule) {
+    public void ajouterATS(String filePath) {
+        File file = new File(filePath);
+        ArrayList<ATS> existingATS = new ArrayList<>();
 
+        // Read existing objects if the file exists and has content
+        if (file.exists() && file.length() > 0) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+                while (true) {
+                    try {
+                        ATS ats = (ATS) in.readObject();
+                        existingATS.add(ats);
+                    } catch (EOFException e) {
+                        break;
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Erreur lors de la lecture du fichier: " + e.getMessage());
+            }
+        }
+
+        // Add this ATS instance to the list
+        existingATS.add(this);
+
+        // Write the updated list back to the file
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            for (ATS ats : existingATS) {
+                out.writeObject(ats);
+            }
+            System.out.println("ATS ajouté avec succès.");
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'écriture dans le fichier: " + e.getMessage());
+        }
     }
-    @Override
-    public String toString(){
-        return "Année de recrutement: "+ this.AnneeDeRecrutement + "Service de ratachement: "+ this.ServiceDeRattachement;
-    }
+
+
+
     public void banUtilisateur(String matricule) {
         char typeUtilisateur = matricule.charAt(4);
         String sourcePath = "";
@@ -230,5 +261,4 @@ public class ATS extends Utilisateur {
             System.out.println("Erreur restauration utilisateur.");
         }
     }
-
 }
