@@ -3,6 +3,7 @@ import java.time.LocalDate;
 public class Enseignant extends Utilisateur{
     Faculte fac;
     LocalDate annee;
+// Constructor
     public Enseignant(String nom, String prenom, String password, String mat,
                     double repC, double repP,LocalDate annee,Faculte fac)
             throws MatriculeException, ReputationException{
@@ -10,6 +11,7 @@ public class Enseignant extends Utilisateur{
         this.annee=annee;
         this.fac=fac;
     }
+// Getteurs
     public Faculte getFaculteEn(int choix) {
         System.out.println("Inserez votre Faculte: " +
                 "1)Math,\n" +
@@ -40,6 +42,7 @@ public class Enseignant extends Utilisateur{
     public LocalDate getAnnee(){
         return annee;
     }
+// Setteurs
     public void setFaculte(Faculte fac) {
         this.fac = fac;
     }
@@ -47,28 +50,12 @@ public class Enseignant extends Utilisateur{
     public void setAnnee(LocalDate annee) {
         this.annee = annee;
     }
-
+// Methode responsable d'inscription des enseignant dans l'app.
     public static void RajouterEnseignant(String filePath, Etudiant x) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath, true))) {
             out.writeObject(x);
-            System.out.println("Vous etes bien inscrit.");
         } catch (IOException e) {
-            System.err.println("Une erreur est survenue lors de l'écriture de l'objet : " + e.getMessage());
+            System.err.println("ERREUR: " + e.getMessage());
         }
     }
-
-    public static boolean VerifierEtudiant(String filePath, Etudiant x) {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
-            while (true) {
-                Etudiant e = (Etudiant) in.readObject();
-                if (e.getMatricule().equals(x.getMatricule()) && e.getpassword().equals(x.getpassword())) {
-                    return true;
-                }
-            }
-        } catch (EOFException e) {
-            // End of file reached — no match found
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Erreur lors de la lecture : " + e.getMessage());
-        }
-        return false;
-    }}
+}
