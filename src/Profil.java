@@ -1,20 +1,22 @@
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Profil {
     private Status status;
     private Point itenairairePassager;
     private ArrayList<Point> itenairaireChauffeur;
-    private ArrayList<LocalDate>[] horaires;
+    private ArrayList<LocalDateTime>[] horaires;
     private TypeCourse typeCourse;
+    private Preferences preferences;
 
-    public Profil(Status stat, Point itPass, ArrayList<Point> itChauf, ArrayList<LocalDate>[] hor, TypeCourse typeCourse) {
+    public Profil(Status stat, Point itPass, ArrayList<Point> itChauf, ArrayList<LocalDateTime>[] hor, TypeCourse typeCourse, Preferences preferences) {
         this.status = stat;
         this.itenairairePassager = itPass;
         this.itenairaireChauffeur = itChauf;
         this.horaires = hor;
         this.typeCourse = typeCourse;
+        this.preferences = preferences;
     }
 
     // getteurs :
@@ -31,12 +33,16 @@ public class Profil {
         return itenairaireChauffeur;
     }
 
-    public ArrayList<LocalDate>[] getHoraires() {
+    public ArrayList<LocalDateTime>[] getHoraires() {
         return horaires;
     }
 
     public TypeCourse getTypeCourse() {
         return typeCourse;
+    }
+
+    public Preferences getPreferences() {
+        return preferences;
     }
 
     // setteurs :
@@ -53,7 +59,7 @@ public class Profil {
         this.itenairaireChauffeur = itenairaireChauffeur;
     }
 
-    public void setHoraires(ArrayList<LocalDate>[] horaires) {
+    public void setHoraires(ArrayList<LocalDateTime>[] horaires) {
         this.horaires = horaires;
     }
 
@@ -61,5 +67,7 @@ public class Profil {
         this.typeCourse = typeCourse;
     }
 
-    
+    public void setPreferences(Preferences preferences) {
+        this.preferences = preferences;
+    }
 }
