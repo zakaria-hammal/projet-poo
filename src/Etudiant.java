@@ -1,12 +1,13 @@
 import java.io.*;
-import java.time.LocalDate;
+import java.io.Serializable;
+
 public class Etudiant extends Utilisateur implements Serializable {
-    LocalDate anneeAdmistion;
+    int anneeAdmistion;
     Faculte fac;
     String specialite;
 
     public Etudiant(String nom, String prenom, String password, String mat,
-                    double repC, double repP, LocalDate anneeAdmistion, Faculte fac, String specialite,)
+                    double repC, double repP, int anneeAdmistion, Faculte fac, String specialite)
             throws MatriculeException, ReputationException {
         super(nom, prenom, password, mat, repC, repP);
         this.anneeAdmistion = anneeAdmistion;
@@ -17,7 +18,7 @@ public class Etudiant extends Utilisateur implements Serializable {
         return this.specialite;
     }
 
-    public LocalDate getAnneeAdmistion() {
+    public int getAnneeAdmistion() {
         return this.anneeAdmistion;
     }
     public Faculte getFaculte(){
@@ -47,7 +48,7 @@ public class Etudiant extends Utilisateur implements Serializable {
                         System.out.println("Erreur");
                 }
     }
-    public void setAnneeAdmistion(LocalDate anneeAdmistion) {
+    public void setAnneeAdmistion(int anneeAdmistion) {
         this.anneeAdmistion = anneeAdmistion;
     }
 
