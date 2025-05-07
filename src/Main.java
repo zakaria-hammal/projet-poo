@@ -29,11 +29,6 @@ public class Main {
                     }
                 }else System.out.println("Vous n'etes pas inscris encore !");
             }
-                switch(choix){
-                    case 1 :
-                    case 2 :
-                    case 3 :
-                }
             }
             case 2 :{
                 System.out.println("Vous etes un: \n"+"1) Etudiant\n"+"2) Enseignant\n"+"3) ATS\n");
@@ -45,18 +40,13 @@ public class Main {
                         String mat = obj.nextLine();
                         System.out.print("Entrez votre mot de passe : ");
                         String password = obj.nextLine();
-                        System.out.print("Entrez votre nom : ");
-                        String nom = obj.nextLine();
                         if(Utilisateur.login(mat,password)==null){
+                             System.out.print("Entrez votre nom : ");
+                        String nom = obj.nextLine();
                         System.out.print("Entrez votre prénom : ");
                         String prenom = obj.nextLine();
-
-                        System.out.print("Entrez la valeur de réponse C : ");
-                        double repC = obj.nextDouble();
-
-                        System.out.print("Entrez la valeur de réponse P : ");
-                        double repP = obj.nextDouble();
-
+                        double repC = 2.5;
+                        double repP = 2.5;
                         System.out.print("Entrez l'année vous avez admets votre bac : ");
                         int annee = obj.nextInt();
                         System.out.println("Entrez votre specialite : " );
@@ -89,7 +79,8 @@ public class Main {
                         }
                         Etudiant etudiant = new Etudiant(nom, prenom, password, mat, repC, repP, anneeAdmistion,specialite, fac);
 
-                        etudiant.RajouterEtudiant("C:\\Users\\dell\\Desktop\\k.txt\\",etudiant);}//le path est juste un exemple ca depand lpc li npresentiw bih
+                        etudiant.RajouterEtudiant("C:\\Users\\dell\\Desktop\\k.txt\\",etudiant);}
+                        else System.out.println("Vos coordonnes existent deja!");}//le path est juste un exemple ca depand lpc li npresentiw bih
                     case 2:{
                         System.out.print("Entrez votre matricule : ");
                         String mat = obj.nextLine();
@@ -137,9 +128,9 @@ public class Main {
                             String mat = obj.nextLine();
                             System.out.print("Entrez votre mot de passe : ");
                             String password = obj.nextLine();
-                            System.out.print("Entrez votre nom : ");
-                            String nom = obj.nextLine();
                             if(Utilisateur.login(mat,password)==null){
+                                System.out.print("Entrez votre nom : ");
+                            String nom = obj.nextLine();
                                 System.out.print("Entrez votre prénom : ");
                                 String prenom = obj.nextLine();
 
@@ -179,9 +170,10 @@ public class Main {
                                     default:
                                         System.out.println("Erreur");
                                 }
-                                ATS ats= new Etudiant(nom, prenom, password, mat, repC, repP, AnneeDeRecrutement,ServiceDeRattachement, fac);
+                                ATS ats= new ATS(nom, prenom, password, mat, repC, repP, AnneeDeRecrutement,ServiceDeRattachement, fac);
 
-                                ats.AjouterATS("C:\\Users\\dell\\Desktop\\k.txt\\",ats);}}
+                                ats.AjouterATS("C:\\Users\\dell\\Desktop\\k.txt\\",ats);}
+                            else System.out.println("Vos coordonnes existent deja!");}
                 }
             }
 
