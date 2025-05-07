@@ -89,7 +89,7 @@ public class Course implements Serializable {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error reading planned courses: " + e.getMessage());
+            System.err.println("Erreur de lecture des courses planifiees: " + e.getMessage());
         }
         return maListe;
     }
@@ -118,7 +118,7 @@ public class Course implements Serializable {
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
-                System.err.println("Error reading planned courses: " + e.getMessage());
+                System.err.println("Erreur de lecture des courses planifiees: " + e.getMessage());
                 return;
             }
         }
@@ -132,7 +132,7 @@ public class Course implements Serializable {
                 out.writeObject(course);
             }
         } catch (IOException e) {
-            System.err.println("Error writing planned courses: " + e.getMessage());
+            System.err.println("Erreur d'ecriture des courses planifiees: " + e.getMessage());
             return;
         }
 
@@ -146,7 +146,7 @@ public class Course implements Serializable {
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
-                System.err.println("Error reading ongoing courses: " + e.getMessage());
+                System.err.println("Erreur de lecture des courses en cours: " + e.getMessage());
             }
         }
 
@@ -157,7 +157,7 @@ public class Course implements Serializable {
                 out.writeObject(course);
             }
         } catch (IOException e) {
-            System.err.println("Error writing ongoing courses: " + e.getMessage());
+            System.err.println("Erreur d'ecriture des courses en cours: " + e.getMessage());
         }
     }
 
@@ -222,7 +222,7 @@ public class Course implements Serializable {
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
-                System.err.println("Error reading ongoing courses: " + e.getMessage());
+                System.err.println("Erreur de lecture des courses en cours: " + e.getMessage());
                 return;
             }
         }
@@ -236,7 +236,7 @@ public class Course implements Serializable {
                 out.writeObject(course);
             }
         } catch (IOException e) {
-            System.err.println("Error writing ongoing courses: " + e.getMessage());
+            System.err.println("Erreur d'ecriture des courses en cours: " + e.getMessage());
             return;
         }
 
@@ -250,7 +250,7 @@ public class Course implements Serializable {
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
-                System.err.println("Error reading completed courses: " + e.getMessage());
+                System.err.println("Erreur de lecture des courses termines: " + e.getMessage());
             }
         }
 
@@ -261,7 +261,7 @@ public class Course implements Serializable {
                 out.writeObject(course);
             }
         } catch (IOException e) {
-            System.err.println("Error writing completed courses: " + e.getMessage());
+            System.err.println("Erreur d'ecriture des courses termines: " + e.getMessage());
         }
     }
 
