@@ -23,7 +23,7 @@ public class Main {
                     case 1 :{ user.setStatus(Status.Chauffeur);
                     // methode et fonctionnement dun chauffeur
                     }
-                    case 2 : user.setStatus(Status.Passager);{
+                    case 2 : {user.setStatus(Status.Passager);
                         // methode et fonctionemt dun passager
                     }
                     }
