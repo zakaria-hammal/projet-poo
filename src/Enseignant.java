@@ -14,7 +14,7 @@ public class Enseignant extends Utilisateur implements Serializable{
     public int getAnnee(){
         return this.annee;
     }
-    public Faculte getFaculte(Faculte fac) {
+    public Faculte getFaculte() {
         return this.fac;
     }
     public Faculte setFaculteEn(int choix) {
