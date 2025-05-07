@@ -26,6 +26,8 @@ public class Main {
                     case 2 : {user.setStatus(Status.Passager);
                         // methode et fonctionemt dun passager
                     }
+                     default:
+                    System.out.println("Erreur");
                     }
                 }else System.out.println("Vous n'etes pas inscris encore !");
             }
@@ -177,6 +179,8 @@ public class Main {
                 }
             }
 
-            case 3 :System.exit(0);}
+            case 3 :System.exit(0);
+           default:
+            System.out.println("Erreur");}
     }
 }
