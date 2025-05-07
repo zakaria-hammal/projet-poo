@@ -1,47 +1,75 @@
-import java.io.*;
-import java.time.LocalDate;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 public class Enseignant extends Utilisateur{
     Faculte fac;
-    LocalDate annee;
-    public Enseignant(String nom, String prenom, String password, String mat,
-                    double repC, double repP,LocalDate annee,Faculte fac)
-            throws MatriculeException, ReputationException{
+    int annee;
+
+    public Enseignant(String nom, String prenom, String password, String mat, double repC, double repP,Faculte fac) throws MatriculeException, ReputationException {
         super(nom, prenom, password, mat, repC, repP);
-        this.annee=annee;
+        String temp = "";
+
+        for (int i = 0; i < 4; i++) {
+            temp = temp + mat.charAt(i);
+        }
+        
+        this.annee = Integer.parseInt(temp);
         this.fac=fac;
     }
-    public LocalDate getAnnee(){
+    
+    public int getAnnee(){
         return this.annee;
     }
-    public Faculte getFaculte(Faculte fac) {
+    
+    public Faculte getFaculte() {
         return this.fac;
     }
-    public Faculte setFaculteEn(int choix) {
-        switch (choix) {
-            case 1: this.fac= Faculte.Math;
-            case 2: this.fac= Faculte.Informatique;
-            case 3: this.fac= Faculte.Physique;
-            case 4: this.fac= Faculte.Chimie;
-            case 5: this.fac= Faculte.Biologie;
-            case 6: this.fac= Faculte.GénieC;
-            case 7: this.fac= Faculte.GénieE;
-            case 8: this.fac= Faculte.GénieMP;
-            case 9: this.fac= Faculte.Géologie;
-            default:
-                System.out.println("Erreur");
+
+    public void setFaculte(Faculte fac) {
+        this.fac = fac;
+    }
+
+    public static void AjouterEnseignant(Enseignant x) throws UtilisateurExistDeja {
+        ArrayList<Enseignant> temp = new ArrayList<>();
+        Enseignant enseignant;
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
+            while (true) {
+                try {
+                    enseignant = (Enseignant) in.readObject();
+                    if (x.getMatricule() == null ? enseignant.getMatricule() == null : x.getMatricule().equals(enseignant.getMatricule())) {
+                        throw new UtilisateurExistDeja("Utilisateur avec ce matricule existe deja");
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    break;
+                }
+            }
+            
+        } catch (IOException e) {
+            System.err.println("Une erreur est survenue lors de l'écriture de l'objet : " + e.getMessage());
+            return;
         }
-    }
 
-    public void setAnnee(LocalDate annee) {
-        this.annee = annee;
-    }
+        temp.add(x);
 
-    public static void RajouterEnseignant(String filePath, Etudiant x) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath, true))) {
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierEnseignant"));
+            for (Enseignant elem : temp) {
+                out.writeObject((Enseignant) elem);
+            }
+            
+        } catch (IOException e) {
+            System.err.println("Une erreur est survenue lors de l'écriture de l'objet : " + e.getMessage());
+        }
+
+        /*try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath, true))) {
             out.writeObject(x);
             System.out.println("Vous etes bien inscrit.");
         } catch (IOException e) {
             System.err.println("Une erreur est survenue lors de l'écriture de l'objet : " + e.getMessage());
-        }
+        }*/
     }
 }

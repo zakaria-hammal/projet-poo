@@ -1,4 +1,7 @@
-public class Preferences {
+
+import java.io.Serializable;
+
+public class Preferences implements Serializable{
     private boolean accepterFilles;
     private boolean accepterGarcons;
     private boolean accepterMusique;
@@ -46,5 +49,9 @@ public class Preferences {
 
     public void setAutres(String aut) {
         this.autres = aut;
+    }
+
+    public boolean acceptable(Preferences p) {
+        return (this.accepterFilles == p.accepterFilles && this.accepterGarcons == p.accepterGarcons && this.accepterMusique == p.accepterMusique && this.accepterBagages == p.accepterBagages);
     }
 }

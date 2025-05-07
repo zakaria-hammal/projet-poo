@@ -1,8 +1,11 @@
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class Profil {
+public class Profil implements Serializable {
+
+    static Object Status;
     private Status status;
     private Point itenairairePassager;
     private ArrayList<Point> itenairaireChauffeur;

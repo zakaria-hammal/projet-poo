@@ -344,7 +344,7 @@ public class Utilisateur implements Serializable {
         switch (matricule.charAt(0)) {
             case '0' -> { 
                 file = new File("../FichiersDeSauvegarde/fichierATS");
-                if(!file.exists() && file.length() != 0) {
+                if(file.exists() && file.length() != 0) {
                     in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
                     while (true) {
                         try {
@@ -364,7 +364,7 @@ public class Utilisateur implements Serializable {
         
             case '1' -> {
                 file = new File("../FichiersDeSauvegarde/fichierEtudiant");
-                if(!file.exists() && file.length() != 0) {
+                if(file.exists() && file.length() != 0) {
                     in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
                     while (true) {
                         try {
@@ -384,7 +384,7 @@ public class Utilisateur implements Serializable {
 
             case '2' -> {
                 file = new File("../FichiersDeSauvegarde/fichierEnseignant");
-                if(!file.exists() && file.length() != 0) {
+                if(file.exists() && file.length() != 0) {
                     in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEnseignant"));
                     while (true) {
                         try {

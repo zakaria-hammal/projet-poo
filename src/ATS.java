@@ -1,20 +1,25 @@
 import java.io.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ATS extends Utilisateur implements Serializable {
-    private LocalDate AnneeDeRecrutement;
+    private final int AnneeDeRecrutement;
     private String ServiceDeRattachement;
 
-    public ATS(String nom, String prenom, String password, String mat, double repC, double repP, LocalDate adr, String sdr)
+    public ATS(String nom, String prenom, String password, String mat, double repC, double repP, String sdr)
             throws MatriculeException, ReputationException {
         super(nom, prenom, password, mat, repC, repP);
-        this.AnneeDeRecrutement = adr;
+        String temp = "";
+
+        for (int i = 0; i < 4; i++) {
+            temp = temp + mat.charAt(i);
+        }
+        
+        this.AnneeDeRecrutement = Integer.parseInt(temp);
         this.ServiceDeRattachement = sdr;
     }
 
     //Getters
-    public LocalDate getAnneeDeRecrutement() {
+    public int getAnneeDeRecrutement() {
         return this.AnneeDeRecrutement;
     }
 
@@ -22,9 +27,6 @@ public class ATS extends Utilisateur implements Serializable {
         return this.ServiceDeRattachement;
     }
     //Setters
-    public void setAnneeDeRecrutement(LocalDate adr) {
-        this.AnneeDeRecrutement = adr;
-    }
 
     public void setServiceDeRattachement(String sdr) {
         this.ServiceDeRattachement = sdr;
