@@ -2,17 +2,11 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class ATS extends Utilisateur implements Serializable {
-<<<<<<< HEAD
-    private final int AnneeDeRecrutement;
-    private String ServiceDeRattachement;
 
-    public ATS(String nom, String prenom, String password, String mat, double repC, double repP, String sdr)
-=======
     private int AnneeDeRecrutement;
     private String ServiceDeRattachement;
 
-    public ATS(String nom, String prenom, String password, String mat, double repC, double repP, int adr, String sdr)
->>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
+    public ATS(String nom, String prenom, String password, String mat, double repC, double repP, String sdr)
             throws MatriculeException, ReputationException {
         super(nom, prenom, password, mat, repC, repP);
         String temp = "";
@@ -25,11 +19,7 @@ public class ATS extends Utilisateur implements Serializable {
         this.ServiceDeRattachement = sdr;
     }
 
-<<<<<<< HEAD
-    //Getters
-=======
     // Getters and Setters
->>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
     public int getAnneeDeRecrutement() {
         return this.AnneeDeRecrutement;
     }
@@ -37,14 +27,10 @@ public class ATS extends Utilisateur implements Serializable {
     public String getServiceDeRattachement() {
         return this.ServiceDeRattachement;
     }
-<<<<<<< HEAD
-    //Setters
-=======
 
     public void setAnneeDeRecrutement(int adr) {
         this.AnneeDeRecrutement = adr;
     }
->>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
 
     public void setServiceDeRattachement(String sdr) {
         this.ServiceDeRattachement = sdr;

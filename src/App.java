@@ -130,7 +130,7 @@ public class App {
                                     ((ATS)utilisateur).setServiceDeRattachement(service);
                                     ((ATS)utilisateur).ajouterATS("../FichierDeSauvegarde/fichierATS");
                                     valid = 1;                         
-                                } catch (MatriculeException | ReputationException e) {
+                                } catch (ATSException | MatriculeException | ReputationException e) {
                                     System.out.println(e.getMessage());
                                 }
                             }
