@@ -1,4 +1,5 @@
 
+import com.sun.jdi.InvalidTypeException;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -40,7 +41,7 @@ public class App {
                 case 2 -> {
                     int valid = 0;
                     while (valid == 0) { 
-                        System.out.println("Vous etes un ...\n1- Etudiant\n2- Enseignat\n3- ATS");
+                        System.out.println("Vous etes un ...\n1- Etudiant\n2- Enseignat");
                         int type;
         
                         type = Integer.parseInt(sc.nextLine());
@@ -67,7 +68,7 @@ public class App {
                                 while (numfac < 1 || numfac > 9) { 
                                     System.out.println("Vous etes de la faculte :");
                                     for (Faculte elem : Faculte.values()) {
-                                        System.out.println(String.valueOf((elem.ordinal() + 1)) + elem.toString());
+                                        System.out.println(String.valueOf((elem.ordinal() + 1)) + " - " + elem.toString());
                                     }  
         
                                     numfac = Integer.parseInt(sc.nextLine());
@@ -85,9 +86,9 @@ public class App {
         
                                 try {
                                     utilisateur = new Etudiant(nom, prenom, password, mat, 2.5, 2.5, faculte, specalite);
-                                    Etudiant.AjouterEtudiant((Etudiant) utilisateur);
+                                    Etudiant.ajouterEtudiant((Etudiant) utilisateur);
                                     valid = 1;
-                                } catch (MatriculeException | ReputationException | UtilisateurExistDeja e) {
+                                } catch (MatriculeException | ReputationException | UtilisateurExistDeja | InvalidTypeException e) {
                                     System.out.println(e.getMessage());
                                 }
                             }
@@ -99,7 +100,7 @@ public class App {
                                 while (numfac < 1 || numfac > 9) { 
                                     System.out.println("Vous etes de la faculte :");
                                     for (Faculte elem : Faculte.values()) {
-                                        System.out.println(String.valueOf((elem.ordinal() + 1)) + elem.toString());
+                                        System.out.println(String.valueOf((elem.ordinal() + 1)) + " - " + elem.toString());
                                     }  
         
                                     numfac = Integer.parseInt(sc.nextLine());
@@ -115,22 +116,7 @@ public class App {
                                     utilisateur = new Enseignant(nom, prenom, password, mat, 2.5, 2.5, faculte);
                                     Enseignant.AjouterEnseignant((Enseignant) utilisateur);
                                     valid = 1;
-                                } catch (MatriculeException | ReputationException | UtilisateurExistDeja e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            }
-
-                            case 3 -> {
-                                String service;
-                                System.out.print("Votre service de rattachement :\t");
-                                service = sc.nextLine();
-
-                                try {
-                                    utilisateur = new ATS(nom, prenom, password, mat, 2.5, 2.5, mat);
-                                    ((ATS)utilisateur).setServiceDeRattachement(service);
-                                    ((ATS)utilisateur).ajouterATS("../FichierDeSauvegarde/fichierATS");
-                                    valid = 1;                         
-                                } catch (ATSException | MatriculeException | ReputationException e) {
+                                } catch (MatriculeException | ReputationException | UtilisateurExistDeja | InvalidTypeException e) {
                                     System.out.println(e.getMessage());
                                 }
                             }

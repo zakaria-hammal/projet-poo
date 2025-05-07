@@ -1,5 +1,6 @@
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.security.spec.InvalidParameterSpecException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class Course implements Serializable{
+public class Course implements Serializable {
     private Etat etat;
     private LocalDateTime dateHeurePrevu;
     private Utilisateur chauffeur;
@@ -40,9 +41,10 @@ public class Course implements Serializable{
     }
 
     public void plannifiee() throws IOException {
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierCoursePlanifiee"));
-
-        out.writeObject(this);
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new FileOutputStream("../FichiersDeSauvegarde/fichierCoursePlanifiee", true))) {
+            out.writeObject(this);
+        }
     }
 
     public void ajouterPassager(Utilisateur passager) throws StatutInvalideException, CourseCompleteException, EtatCourseInvalideException {
@@ -50,12 +52,10 @@ public class Course implements Serializable{
             throw new EtatCourseInvalideException("Impossible d'ajouter un passager à une course " + etat);
         }
         
-        // Check if course is not full
-        if (passagers.size() >= 4) { // Assuming maximum 4 passengers
+        if (passagers.size() >= 4) {
             throw new CourseCompleteException("La course est complète");
         }
         
-        // Check if user is a passenger
         if (passager.getProfil().getStatus() != Status.Passager) {
             throw new StatutInvalideException("L'utilisateur doit être un passager pour rejoindre une course");
         }
@@ -64,94 +64,100 @@ public class Course implements Serializable{
     }
 
     public static ArrayList<Course> getCoursesCompatible(Utilisateur passager) {
-        Course course;
         ArrayList<Course> maListe = new ArrayList<>();
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierCoursePlanifiee"));
+        File file = new File("../FichiersDeSauvegarde/fichierCoursePlanifiee");
+        
+        if (!file.exists() || file.length() == 0) {
+            return maListe;
+        }
 
-            while (true) { 
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
                 try {
-                    course = (Course) in.readObject();
-                    if (course.chauffeur.getProfil().getPreferences().acceptable(passager.getProfil().getPreferences())) {
+                    Course course = (Course) in.readObject();
+                    if (course.chauffeur.getProfil().getPreferences().acceptable(
+                            passager.getProfil().getPreferences())) {
                         for (Point elem : course.chauffeur.getProfil().getItenairaireChauffeur()) {
                             if (elem == passager.getProfil().getItenairairePassager()) {
                                 maListe.add(course);
                                 break;
                             }
                         }
-                        
                     }
-                } catch (EOFException | ClassNotFoundException e) {
+                } catch (EOFException e) {
                     break;
                 }
             }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error reading planned courses: " + e.getMessage());
         }
-
         return maListe;
     }
 
     public void commencer() {
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierCoursePlanifiee"));
+        File planifieeFile = new File("../FichiersDeSauvegarde/fichierCoursePlanifiee");
+        File enCoursFile = new File("../FichiersDeSauvegarde/fichierCourseEnCours");
+        
+        ArrayList<Course> remainingCourses = new ArrayList<>();
+        ArrayList<Course> coursesEnCours = new ArrayList<>();
+        Course currentCourse = null;
 
-            ArrayList<Course> maListe = new ArrayList<>();
-            Course temp;
-
-            Course maCourse = null;
-
-            while (true) { 
-                try {
-                    temp = (Course) in.readObject();
-
-                    if((temp.chauffeur.getMatricule() == null ? this.chauffeur.getMatricule() == null : temp.chauffeur.getMatricule().equals(this.chauffeur.getMatricule())) && temp.dateHeurePrevu == this.dateHeurePrevu) {
-                        maCourse = temp;
+        if (planifieeFile.exists() && planifieeFile.length() > 0) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(planifieeFile))) {
+                while (true) {
+                    try {
+                        Course temp = (Course) in.readObject();
+                        if (temp.chauffeur.getMatricule().equals(this.chauffeur.getMatricule()) && 
+                            temp.dateHeurePrevu.equals(this.dateHeurePrevu)) {
+                            currentCourse = temp;
+                        } else {
+                            remainingCourses.add(temp);
+                        }
+                    } catch (EOFException e) {
+                        break;
                     }
-                    else {
-                        maListe.add(temp);
-                    }
-
-                } catch (EOFException e) {
-                    break;
                 }
-
-            }
-
-            if(maCourse == null ) {
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Error reading planned courses: " + e.getMessage());
                 return;
             }
+        }
 
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierCoursePlanifiee"));
+        if (currentCourse == null) {
+            return;
+        }
 
-            for (Course elem : maListe) {
-                out.writeObject((Course) elem);
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(planifieeFile))) {
+            for (Course course : remainingCourses) {
+                out.writeObject(course);
             }
+        } catch (IOException e) {
+            System.err.println("Error writing planned courses: " + e.getMessage());
+            return;
+        }
 
-            maListe.clear();
-
-            maListe.add(maCourse);
-
-            in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierCourseEnCours"));
-
-            while (true) { 
-                try {
-                    temp = (Course) in.readObject();
-                    maListe.add(temp);
-
-                } catch (EOFException e) {
-                    break;
+        if (enCoursFile.exists() && enCoursFile.length() > 0) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(enCoursFile))) {
+                while (true) {
+                    try {
+                        coursesEnCours.add((Course) in.readObject());
+                    } catch (EOFException e) {
+                        break;
+                    }
                 }
-
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Error reading ongoing courses: " + e.getMessage());
             }
+        }
 
-            out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierCourseEnCours"));
+        coursesEnCours.add(currentCourse);
 
-            for (Course elem : maListe) {
-                out.writeObject((Course) elem);
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(enCoursFile))) {
+            for (Course course : coursesEnCours) {
+                out.writeObject(course);
             }
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error writing ongoing courses: " + e.getMessage());
         }
     }
 
@@ -193,65 +199,69 @@ public class Course implements Serializable{
             
         }
 
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierCourseEnCours"));
+        File enCoursFile = new File("../FichiersDeSauvegarde/fichierCourseEnCours");
+        File termineeFile = new File("../FichiersDeSauvegarde/fichierCourseTerminee");
+        
+        ArrayList<Course> remainingOngoing = new ArrayList<>();
+        ArrayList<Course> completedCourses = new ArrayList<>();
+        Course currentCourse = null;
 
-            ArrayList<Course> maListe = new ArrayList<>();
-            Course temp;
-
-            Course maCourse = null;
-
-            while (true) { 
-                try {
-                    temp = (Course) in.readObject();
-
-                    if((temp.chauffeur.getMatricule() == null ? this.chauffeur.getMatricule() == null : temp.chauffeur.getMatricule().equals(this.chauffeur.getMatricule())) && temp.dateHeurePrevu == this.dateHeurePrevu) {
-                        maCourse = temp;
+        if (enCoursFile.exists() && enCoursFile.length() > 0) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(enCoursFile))) {
+                while (true) {
+                    try {
+                        Course temp = (Course) in.readObject();
+                        if (temp.chauffeur.getMatricule().equals(this.chauffeur.getMatricule()) && 
+                            temp.dateHeurePrevu.equals(this.dateHeurePrevu)) {
+                            currentCourse = temp;
+                        } else {
+                            remainingOngoing.add(temp);
+                        }
+                    } catch (EOFException e) {
+                        break;
                     }
-                    else {
-                        maListe.add(temp);
-                    }
-
-                } catch (EOFException e) {
-                    break;
                 }
-
-            }
-
-            if(maCourse == null ) {
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Error reading ongoing courses: " + e.getMessage());
                 return;
             }
+        }
 
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierCourseEnCours"));
+        if (currentCourse == null) {
+            return;
+        }
 
-            for (Course elem : maListe) {
-                out.writeObject((Course) elem);
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(enCoursFile))) {
+            for (Course course : remainingOngoing) {
+                out.writeObject(course);
             }
+        } catch (IOException e) {
+            System.err.println("Error writing ongoing courses: " + e.getMessage());
+            return;
+        }
 
-            maListe.clear();
-
-            maListe.add(maCourse);
-
-            in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierCourseTerminee"));
-
-            while (true) { 
-                try {
-                    temp = (Course) in.readObject();
-                    maListe.add(temp);
-
-                } catch (EOFException e) {
-                    break;
+        if (termineeFile.exists() && termineeFile.length() > 0) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(termineeFile))) {
+                while (true) {
+                    try {
+                        completedCourses.add((Course) in.readObject());
+                    } catch (EOFException e) {
+                        break;
+                    }
                 }
-
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Error reading completed courses: " + e.getMessage());
             }
+        }
 
-            out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierCourseTerminee"));
+        completedCourses.add(currentCourse);
 
-            for (Course elem : maListe) {
-                out.writeObject((Course) elem);
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(termineeFile))) {
+            for (Course course : completedCourses) {
+                out.writeObject(course);
             }
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error writing completed courses: " + e.getMessage());
         }
     }
 
