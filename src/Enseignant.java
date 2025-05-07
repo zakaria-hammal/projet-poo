@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +10,17 @@ public class Enseignant extends Utilisateur{
     int annee;
 
     public Enseignant(String nom, String prenom, String password, String mat, double repC, double repP,Faculte fac) throws MatriculeException, ReputationException {
+=======
+import java.io.*;
+import java.io.Serializable;
+
+public class Enseignant extends Utilisateur implements Serializable{
+    Faculte fac;
+    int annee;
+    public Enseignant(String nom, String prenom, String password, String mat,
+                    double repC, double repP,int annee,Faculte fac)
+            throws MatriculeException, ReputationException{
+>>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
         super(nom, prenom, password, mat, repC, repP);
         String temp = "";
 
@@ -19,11 +31,17 @@ public class Enseignant extends Utilisateur{
         this.annee = Integer.parseInt(temp);
         this.fac=fac;
     }
+<<<<<<< HEAD
     
     public int getAnnee(){
         return this.annee;
     }
     
+=======
+    public int getAnnee(){
+        return this.annee;
+    }
+>>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
     public Faculte getFaculte() {
         return this.fac;
     }
@@ -53,6 +71,7 @@ public class Enseignant extends Utilisateur{
             return;
         }
 
+<<<<<<< HEAD
         temp.add(x);
 
         try {
@@ -66,6 +85,14 @@ public class Enseignant extends Utilisateur{
         }
 
         /*try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath, true))) {
+=======
+    public void setAnnee(int annee) {
+        this.annee = annee;
+    }
+
+    public static void RajouterEnseignant(String filePath, Enseignant x) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath, true))) {
+>>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
             out.writeObject(x);
             System.out.println("Vous etes bien inscrit.");
         } catch (IOException e) {

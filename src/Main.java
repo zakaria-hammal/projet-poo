@@ -26,6 +26,7 @@ public class Main {
                     case 2 : {user.setStatus(Status.Passager);
                         // methode et fonctionemt dun passager
                     }
+<<<<<<< HEAD
                 }
                 }else System.out.println("Vous n'etes pas inscris encore !");
             }
@@ -34,6 +35,13 @@ public class Main {
                     case 2 :
                     case 3 :
                 }
+=======
+                     default:
+                    System.out.println("Erreur");
+                    }
+                }else System.out.println("Vous n'etes pas inscris encore !");
+            }
+>>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
             }
             case 2 :{
                 System.out.println("Vous etes un: \n"+"1) Etudiant\n"+"2) Enseignant\n"+"3) ATS\n");
@@ -45,6 +53,7 @@ public class Main {
                         String mat = obj.nextLine();
                         System.out.print("Entrez votre mot de passe : ");
                         String password = obj.nextLine();
+<<<<<<< HEAD
                         System.out.print("Entrez votre nom : ");
                         String nom = obj.nextLine();
                         if(Utilisateur.login(mat,password)==null){
@@ -57,6 +66,15 @@ public class Main {
                         System.out.print("Entrez la valeur de réponse P : ");
                         double repP = obj.nextDouble();
 
+=======
+                        if(Utilisateur.login(mat,password)==null){
+                             System.out.print("Entrez votre nom : ");
+                        String nom = obj.nextLine();
+                        System.out.print("Entrez votre prénom : ");
+                        String prenom = obj.nextLine();
+                        double repC = 2.5;
+                        double repP = 2.5;
+>>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
                         System.out.print("Entrez l'année vous avez admets votre bac : ");
                         int annee = obj.nextInt();
                         System.out.println("Entrez votre specialite : " );
@@ -89,7 +107,8 @@ public class Main {
                         }
                         Etudiant etudiant = new Etudiant(nom, prenom, password, mat, repC, repP, anneeAdmistion,specialite, fac);
 
-                        etudiant.RajouterEtudiant("C:\\Users\\dell\\Desktop\\k.txt\\",etudiant);}//le path est juste un exemple ca depand lpc li npresentiw bih
+                        etudiant.RajouterEtudiant("C:\\Users\\dell\\Desktop\\k.txt\\",etudiant);}
+                        else System.out.println("Vos coordonnes existent deja!");}//le path est juste un exemple ca depand lpc li npresentiw bih
                     case 2:{
                         System.out.print("Entrez votre matricule : ");
                         String mat = obj.nextLine();
@@ -137,9 +156,15 @@ public class Main {
                             String mat = obj.nextLine();
                             System.out.print("Entrez votre mot de passe : ");
                             String password = obj.nextLine();
+<<<<<<< HEAD
                             System.out.print("Entrez votre nom : ");
                             String nom = obj.nextLine();
                             if(Utilisateur.login(mat,password)==null){
+=======
+                            if(Utilisateur.login(mat,password)==null){
+                                System.out.print("Entrez votre nom : ");
+                            String nom = obj.nextLine();
+>>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
                                 System.out.print("Entrez votre prénom : ");
                                 String prenom = obj.nextLine();
 
@@ -179,6 +204,7 @@ public class Main {
                                     default:
                                         System.out.println("Erreur");
                                 }
+<<<<<<< HEAD
                                 ATS ats= new Etudiant(nom, prenom, password, mat, repC, repP, AnneeDeRecrutement,ServiceDeRattachement, fac);
 
                                 ats.AjouterATS("C:\\Users\\dell\\Desktop\\k.txt\\",ats);}}
@@ -186,5 +212,17 @@ public class Main {
             }
 
             case 3 :System.exit(0);}
+=======
+                                ATS ats= new ATS(nom, prenom, password, mat, repC, repP, AnneeDeRecrutement,ServiceDeRattachement, fac);
+
+                                ats.AjouterATS("C:\\Users\\dell\\Desktop\\k.txt\\",ats);}
+                            else System.out.println("Vos coordonnes existent deja!");}
+                }
+            }
+
+            case 3 :System.exit(0);
+           default:
+            System.out.println("Erreur");}
+>>>>>>> b81cc453c10b972ad95022a46ad6187d36d81da6
     }
 }
