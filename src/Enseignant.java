@@ -37,7 +37,7 @@ public class Enseignant extends Utilisateur implements Serializable{
         this.annee = annee;
     }
 
-    public static void RajouterEnseignant(String filePath, Etudiant x) {
+    public static void RajouterEnseignant(String filePath, Enseignant x) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath, true))) {
             out.writeObject(x);
             System.out.println("Vous etes bien inscrit.");
