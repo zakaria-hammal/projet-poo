@@ -2,5 +2,8 @@ public enum Point {
     DarElBida,
     BabEzzouar,
     Dergana,
-    Harrach
+    Harrach,
+    Hammadi,
+    Heydra,
+    BabElOued
 }

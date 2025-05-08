@@ -1,6 +1,6 @@
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Profil implements Serializable {
@@ -8,14 +8,14 @@ public class Profil implements Serializable {
     private Status status;
     private Point itenairairePassager;
     private ArrayList<Point> itenairaireChauffeur;
-    private ArrayList<LocalDateTime>[] horaires;
+    private ArrayList<ArrayList<LocalTime>> horaires;
     private TypeCourse typeCourse;
     private Preferences preferences;
 
     public Profil() {
     }
 
-    public Profil(Status stat, Point itPass, ArrayList<Point> itChauf, ArrayList<LocalDateTime>[] hor, TypeCourse typeCourse, Preferences preferences) {
+    public Profil(Status stat, Point itPass, ArrayList<Point> itChauf, ArrayList<ArrayList<LocalTime>> hor, TypeCourse typeCourse, Preferences preferences) {
         this.status = stat;
         this.itenairairePassager = itPass;
         this.itenairaireChauffeur = itChauf;
@@ -38,7 +38,7 @@ public class Profil implements Serializable {
         return itenairaireChauffeur;
     }
 
-    public ArrayList<LocalDateTime>[] getHoraires() {
+    public ArrayList<ArrayList<LocalTime>> getHoraires() {
         return horaires;
     }
 
@@ -64,7 +64,7 @@ public class Profil implements Serializable {
         this.itenairaireChauffeur = itenairaireChauffeur;
     }
 
-    public void setHoraires(ArrayList<LocalDateTime>[] horaires) {
+    public void setHoraires(ArrayList<ArrayList<LocalTime>> horaires) {
         this.horaires = horaires;
     }
 

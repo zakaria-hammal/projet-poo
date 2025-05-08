@@ -1,6 +1,8 @@
 
 import com.sun.jdi.InvalidTypeException;
 import java.io.IOException;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
@@ -140,8 +142,17 @@ public class App {
             }
 
         }
-        
-        Profil profil = new Profil();
+
+        if (utilisateur == null) {
+            System.exit(0);
+        }
+
+        Profil profil = utilisateur.getProfil();
+
+        if(profil == null) {
+            profil = new Profil();
+        }
+
         choix = 0;
         System.out.println("Definir votre profil pour ajourd'hui : ");
         while (choix != 1 && choix != 2) {
@@ -153,11 +164,191 @@ public class App {
             }
         }
         
-        if(choix == 1) {
-            profil.setStatus(Status.Chauffeur);
+        Preferences pref = new Preferences();
+        int choixPref = 0;
+
+        System.out.println("Preciser vos preferences : ");
+        System.out.println("Acceptez-vous des garçons durant la course ?\n1-Oui\n2- Non");
+
+        while (choixPref != 1 && choixPref != 2) {
+            choixPref = Integer.parseInt(sc.nextLine());
+
+            if (choixPref != 1 && choixPref != 2) {
+                System.out.println("Reesseyer !!!");
+            }
+        }
+
+        if (choix == 1) {
+            pref.setAccepterGarcon(true);
         }
         else {
+            pref.setAccepterGarcon(true);
+        }
+
+        System.out.println("Acceptez-vous des filles durant la course ?\n1-Oui\n2- Non");
+
+        while (choixPref != 1 && choixPref != 2) {
+            choixPref = Integer.parseInt(sc.nextLine());
+
+            if (choixPref != 1 && choixPref != 2) {
+                System.out.println("Reesseyer !!!");
+            }
+        }
+
+        if (choix == 1) {
+            pref.setAccepterFilles(true);
+        }
+        else {
+            pref.setAccepterFilles(true);
+        }
+
+        System.out.println("Acceptez-vous de la musique durant la course ?\n1-Oui\n2- Non");
+
+        while (choixPref != 1 && choixPref != 2) {
+            choixPref = Integer.parseInt(sc.nextLine());
+
+            if (choixPref != 1 && choixPref != 2) {
+                System.out.println("Reesseyer !!!");
+            }
+        }
+
+        if (choix == 1) {
+            pref.setAccepterMusique(true);
+        }
+        else {
+            pref.setAccepterMusique(true);
+        }
+
+        System.out.println("Acceptez-vous des bagages durant la course ?\n1-Oui\n2- Non");
+
+        while (choixPref != 1 && choixPref != 2) {
+            choixPref = Integer.parseInt(sc.nextLine());
+
+            if (choixPref != 1 && choixPref != 2) {
+                System.out.println("Reesseyer !!!");
+            }
+        }
+
+        if (choix == 1) {
+            pref.setAccepterBagages(true);
+        }
+        else {
+            pref.setAccepterBagages(true);
+        }
+
+        String commentaires;
+
+        System.out.println("Autres commentaires : ");
+        commentaires = sc.nextLine();
+
+        pref.setAutres(commentaires);
+
+        profil.setPreferences(pref);
+
+        if(choix == 1) {
+            profil.setStatus(Status.Chauffeur);
+            choix = 0;
+            int repet = 0;
+            
+            Point point;
+            ArrayList<Point> points = new ArrayList<>();
+
+            System.out.println("Definir les points par lesquels vous allez passer :");
+            while (repet == 0) {
+                while (choix < 1 || choix > Point.values().length) {
+                    for (Point elem : Point.values()) {
+                        System.out.println(String.valueOf(elem.ordinal() + 1) + "- " + elem.toString());
+                        choix = Integer.parseInt(sc.nextLine());
+                    }
+    
+                    if(choix < 1 || choix > Point.values().length) {
+                        System.out.println("Reessayer");
+                    }
+                }
+
+                point = Point.values()[choix - 1];
+                points.add(point);
+
+                System.out.println("Ajouter ?\n1 - Oui\n2- Non");
+                
+                repet = -1;
+                while (repet != 0 && repet != 1) {
+                    repet = Integer.parseInt(sc.nextLine()) - 1;
+                }
+            }
+
+            profil.setItenairaireChauffeur(points);
+
+            TypeCourse type;
+
+            choix = 0;
+            while (choix < 1 || choix > TypeCourse.values().length) {
+                System.out.println("Votre type de course");
+                for (TypeCourse elem : TypeCourse.values()) {
+                    System.out.println(String.valueOf(elem.ordinal() + 1) + "- " + elem.toString());
+                    choix = Integer.parseInt(sc.nextLine());
+                }
+
+                if(choix < 1 || choix > TypeCourse.values().length) {
+                    System.out.println("Reessayer");
+                }
+
+            }
+
+            type = TypeCourse.values()[choix - 1];
+            profil.setTypeCourse(type);
+
+            System.out.println("Changer les horaires de disponibilite ?\n1- Oui");
+            choix = Integer.parseInt(sc.nextLine());
+
+            if (choix == 1) {
+                System.out.println("Horaires de disponibilité (hh:mm) :");
+                ArrayList<ArrayList<LocalTime>> horaires = new ArrayList<>();
+
+                ArrayList<LocalTime> pourUnJour;
+
+                String[] joursDeLaSemaine = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
+                
+                for (int i = 0; i < 7; i++) {
+                    choix = 1;
+                    pourUnJour = new ArrayList<>();
+
+                    while (choix == 1) {
+                        System.out.println("Pour le " + joursDeLaSemaine[i] + "1- Ajouter\n2-Jour Suivant");
+                        choix = Integer.parseInt(sc.nextLine());
+
+                        if(choix == 1) {
+                            System.out.print("Entrez l'heure :\t");
+                            pourUnJour.add(LocalTime.parse(sc.nextLine()));
+                        }
+                    }
+                    
+                    horaires.add(pourUnJour);
+                }
+                
+                profil.setHoraires(horaires);
+            }
+            
+        }
+        else {
+            Point point;
             profil.setStatus(Status.Passager);
+            choix = 0;
+            while (choix < 1 || choix > Point.values().length) {
+                System.out.println("Ou voulez vous qu'on vous recupere ?");
+                for (Point elem : Point.values()) {
+                    System.out.println(String.valueOf(elem.ordinal() + 1) + "- " + elem.toString());
+                    choix = Integer.parseInt(sc.nextLine());
+                }
+
+                if(choix < 1 || choix > Point.values().length) {
+                    System.out.println("Reessayer");
+                }
+
+            }
+            
+            point = Point.values()[choix - 1];
+            profil.setItenairairePassager(point);
         }
     }
 }
