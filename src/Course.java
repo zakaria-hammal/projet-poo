@@ -16,7 +16,7 @@ public class Course implements Serializable {
     private LocalDateTime dateHeurePrevu;
     private Utilisateur chauffeur;
     private ArrayList<Utilisateur> passagers;
-    private final TypeTrajet typeTrajet;
+    private final TypeCourse typeTrajet;
 
     private ArrayList<Point> pointsArret;
 
@@ -25,14 +25,14 @@ public class Course implements Serializable {
     private String commentaireChauffeur;
     private ArrayList<String> commentairesPassagers;
 
-    public Course(Utilisateur chauffeur, LocalDateTime dateHeurePrevu, TypeTrajet typeTrajet) throws StatutInvalideException {
+    public Course(Utilisateur chauffeur, LocalDateTime dateHeurePrevu) throws StatutInvalideException {
         if (chauffeur.getProfil().getStatus() != Status.Chauffeur) {
             throw new StatutInvalideException("L'utilisateur doit être un chauffeur pour créer une course");
         }
 
         this.chauffeur = chauffeur;
         this.dateHeurePrevu = dateHeurePrevu;
-        this.typeTrajet = typeTrajet;
+        this.typeTrajet = chauffeur.getProfil().getTypeCourse();
         this.etat = Etat.PLANIFIEE;
         this.passagers = new ArrayList<>();
         this.commentairesPassagers = new ArrayList<>();
@@ -61,7 +61,42 @@ public class Course implements Serializable {
         }
 
         passagers.add(passager);
+
+        File file = new File("../FichiersDeSauvegarde/fichierCoursePlanifiee");
+        ArrayList<Course> courses = new ArrayList<>();
+    
+        if (file.exists() && file.length() > 0) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+                while (true) {
+                    try {
+                        Course course = (Course) in.readObject();
+                        if (course.getChauffeur().getMatricule().equals(this.chauffeur.getMatricule()) && 
+                            course.getHeureDatePrevu().equals(this.dateHeurePrevu)) {
+                            courses.add(this);
+                        } else {
+                            courses.add(course);
+                        }
+                    } catch (EOFException e) {
+                        break;
+                    }
+                }
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        } else {
+            courses.add(this);
+        }
+        
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            for (Course course : courses) {
+                out.writeObject(course);
+            }
+        }
+        catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
     }
+    
 
     public static ArrayList<Course> getCoursesCompatible(Utilisateur passager) {
         ArrayList<Course> maListe = new ArrayList<>();
@@ -76,7 +111,7 @@ public class Course implements Serializable {
                 try {
                     Course course = (Course) in.readObject();
                     if (course.chauffeur.getProfil().getPreferences().acceptable(
-                            passager.getProfil().getPreferences())) {
+                            passager.getProfil().getPreferences()) && (course.passagers.size() < 4)) {
                         for (Point elem : course.chauffeur.getProfil().getItenairaireChauffeur()) {
                             if (elem == passager.getProfil().getItenairairePassager()) {
                                 maListe.add(course);
@@ -265,7 +300,165 @@ public class Course implements Serializable {
         }
     }
 
-    public TypeTrajet getTypeTrajet() {
+    public static ArrayList<Course> getCoursesPlanifiee() {
+        File file = new File("../fichierCoursePlanifiee");
+
+        if (!file.exists() || file.length() == 0) {
+            return null;
+        }
+
+        ArrayList<Course> courses = new ArrayList<>();
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
+                try {
+                    courses.add((Course) in.readObject());
+                } catch (EOFException ex) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return courses;
+    }
+    
+    public static ArrayList<Course> getCoursesPlanifiee(Utilisateur chauffeur) {
+        File file = new File("../fichierCoursePlanifiee");
+
+        if (!file.exists() || file.length() == 0) {
+            return null;
+        }
+
+        ArrayList<Course> courses = new ArrayList<>();
+        Course course;
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
+                try {
+                    course = (Course) in.readObject();
+                    if(course.chauffeur.getMatricule().equals(chauffeur.getMatricule()))
+                    {
+                        courses.add(course);
+                    }
+                } catch (EOFException ex) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return courses;
+    }
+
+    public static ArrayList<Course> getCoursesEnCours() {
+        File file = new File("../fichierCourseEnCours");
+
+        if (!file.exists() || file.length() == 0) {
+            return null;
+        }
+
+        ArrayList<Course> courses = new ArrayList<>();
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
+                try {
+                    courses.add((Course) in.readObject());
+                } catch (EOFException ex) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return courses;
+    }
+    
+    public static ArrayList<Course> getCoursesEnCours(Utilisateur chauffeur) {
+        File file = new File("../fichierCourseEnCours");
+
+        if (!file.exists() || file.length() == 0) {
+            return null;
+        }
+
+        ArrayList<Course> courses = new ArrayList<>();
+        Course course;
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
+                try {
+                    course = (Course) in.readObject();
+                    if(course.chauffeur.getMatricule().equals(chauffeur.getMatricule()))
+                    {
+                        courses.add(course);
+                    }
+                } catch (EOFException ex) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return courses;
+    }
+
+    public static ArrayList<Course> getCoursesTerminee() {
+        File file = new File("../fichierCourseTerminee");
+
+        if (!file.exists() || file.length() == 0) {
+            return null;
+        }
+
+        ArrayList<Course> courses = new ArrayList<>();
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
+                try {
+                    courses.add((Course) in.readObject());
+                } catch (EOFException ex) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return courses;
+    }
+    
+    public static ArrayList<Course> getCoursesTerminee(Utilisateur chauffeur) {
+        File file = new File("../fichierCourseTerminee");
+
+        if (!file.exists() || file.length() == 0) {
+            return null;
+        }
+
+        ArrayList<Course> courses = new ArrayList<>();
+        Course course;
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
+                try {
+                    course = (Course) in.readObject();
+                    if(course.chauffeur.getMatricule().equals(chauffeur.getMatricule()))
+                    {
+                        courses.add(course);
+                    }
+                } catch (EOFException ex) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        return courses;
+    }
+
+    public TypeCourse getTypeTrajet() {
         return typeTrajet;
     }
 
@@ -287,5 +480,9 @@ public class Course implements Serializable {
 
     public String getCommentaireChauffeur() {
         return commentaireChauffeur;
+    }
+
+    public LocalDateTime getHeureDatePrevu() {
+        return dateHeurePrevu;
     }
 }

@@ -1,7 +1,9 @@
 
 import com.sun.jdi.InvalidTypeException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -320,7 +322,7 @@ public class App {
                     pourUnJour = new ArrayList<>();
 
                     while (choix == 1) {
-                        System.out.println("Pour le " + joursDeLaSemaine[i] + "\n1- Ajouter\n2-Jour Suivant");
+                        System.out.println("Pour le " + joursDeLaSemaine[i] + "\n1- Ajouter\n2- Jour Suivant");
                         choix = Integer.parseInt(sc.nextLine());
 
                         if(choix == 1) {
@@ -355,6 +357,83 @@ public class App {
             
             point = Point.values()[choix - 1];
             profil.setItenairairePassager(point);
+        }
+
+        utilisateur.setProfil(profil);
+
+        ArrayList<Course> courses;
+
+        if(profil.getStatus() == Status.Chauffeur) {
+            System.out.println("1- Plannifiee une course\n2- Commencer un course\n3- Terminer une course");
+            choix = Integer.parseInt(sc.nextLine());
+            Course course;
+            switch (choix) {
+                case 1 -> {
+                    LocalDateTime dateTime;
+                    System.out.print("Date et temps prevu : (dd/MM/yyyy HH:mm) \t");
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                    dateTime = LocalDateTime.parse(sc.nextLine(), formatter);
+
+                    try {
+                        course = new Course(utilisateur, dateTime);
+                        course.plannifiee();
+
+                        System.out.println("Course planifieee avec succes");
+                    } catch (StatutInvalideException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            
+                case 2 -> {
+                    courses = Course.getCoursesEnCours(utilisateur);
+                    
+                    if (courses.isEmpty()) {
+                        System.out.println("Vous n'avez pas de course planifiee");
+                    }
+                    else {
+                        choix = 0;
+                        while (choix < 1 || choix > courses.size()) { 
+                            for (int i = 0; i < courses.size(); i++) {
+                                System.out.println(String.valueOf(i + 1) + "- Prévu le : " + courses.get(i).getHeureDatePrevu());
+                            }
+    
+                            System.out.print("Choisir : \t");
+                            choix = Integer.parseInt(sc.nextLine()) - 1;
+                            
+                            if (choix < 1 || choix > courses.size()) {
+                                System.out.println("Reessayez !!!");
+                            }
+                        }
+                        
+                        courses.get(choix - 1).commencer();
+                        System.out.println("Course planifieee avec succes");
+                    }
+
+                }
+
+                default -> {
+                }
+            }
+        }
+        else {
+            System.out.println("1- Rejoidre une course");
+
+            courses = Course.getCoursesCompatible(utilisateur);
+            System.out.println("Voici la liste des courses qui sont compatibles avec vos exigences :");
+            for (int i = 0; i < courses.size(); i++) {
+                System.out.println(String.valueOf(i + 1) + "- Prévu le : " + courses.get(i).getHeureDatePrevu());
+            }
+
+            System.out.print("Choisir : \t");
+            choix = Integer.parseInt(sc.nextLine()) - 1;
+
+            try {
+                courses.get(choix).ajouterPassager(utilisateur);
+
+                System.out.println("Ajoute avec succes");
+            } catch (CourseCompleteException | EtatCourseInvalideException | StatutInvalideException ex) {
+                System.out.println(ex.getMessage());
+            } 
         }
     }
 }
