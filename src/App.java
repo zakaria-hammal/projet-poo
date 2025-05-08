@@ -1,6 +1,7 @@
 
 import com.sun.jdi.InvalidTypeException;
 import java.io.IOException;
+import java.security.spec.InvalidParameterSpecException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -364,54 +365,100 @@ public class App {
         ArrayList<Course> courses;
 
         if(profil.getStatus() == Status.Chauffeur) {
-            System.out.println("1- Plannifiee une course\n2- Commencer un course\n3- Terminer une course");
-            choix = Integer.parseInt(sc.nextLine());
-            Course course;
-            switch (choix) {
-                case 1 -> {
-                    LocalDateTime dateTime;
-                    System.out.print("Date et temps prevu : (dd/MM/yyyy HH:mm) \t");
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                    dateTime = LocalDateTime.parse(sc.nextLine(), formatter);
-
-                    try {
-                        course = new Course(utilisateur, dateTime);
-                        course.plannifiee();
-
-                        System.out.println("Course planifieee avec succes");
-                    } catch (StatutInvalideException ex) {
-                        System.out.println(ex.getMessage());
-                    }
+            Course courseCourrente = null;
+            while (true) {
+                if (courseCourrente == null) {
+                    System.out.println("1- Plannifiee une course\n2- Commencer une course\n3- Quitter");
                 }
-            
-                case 2 -> {
-                    courses = Course.getCoursesEnCours(utilisateur);
-                    
-                    if (courses.isEmpty()) {
-                        System.out.println("Vous n'avez pas de course planifiee");
+                else {
+                    System.out.println("1- Plannifiee une course\n2- Terminer une course\n3- Quitter");
+                }
+                
+                choix = Integer.parseInt(sc.nextLine());
+                Course course;
+                switch (choix) {
+                    case 1 -> {
+                        LocalDateTime dateTime;
+                        System.out.print("Date et temps prevu : (dd/MM/yyyy HH:mm) \t");
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                        dateTime = LocalDateTime.parse(sc.nextLine(), formatter);
+
+                        try {
+                            course = new Course(utilisateur, dateTime);
+                            course.plannifiee();
+
+                            System.out.println("Course planifieee avec succes");
+                        } catch (StatutInvalideException ex) {
+                            System.out.println(ex.getMessage());
+                        }
                     }
-                    else {
-                        choix = 0;
-                        while (choix < 1 || choix > courses.size()) { 
-                            for (int i = 0; i < courses.size(); i++) {
-                                System.out.println(String.valueOf(i + 1) + "- Prévu le : " + courses.get(i).getHeureDatePrevu());
+                
+                    case 2 -> {
+                        courses = Course.getCoursesEnCours(utilisateur);
+                        
+                        if (courses.isEmpty()) {
+                            System.out.println("Vous n'avez pas de course planifiee");
+                        }
+                        else {
+                            if (courseCourrente == null) {
+                                choix = 0;
+                                while (choix < 1 || choix > courses.size()) { 
+                                    for (int i = 0; i < courses.size(); i++) {
+                                        System.out.println(String.valueOf(i + 1) + "- Prévu le : " + courses.get(i).getHeureDatePrevu());
+                                    }
+            
+                                    System.out.print("Choisir : \t");
+                                    choix = Integer.parseInt(sc.nextLine()) - 1;
+                                    
+                                    if (choix < 1 || choix > courses.size()) {
+                                        System.out.println("Reessayez !!!");
+                                    }
+                                }
+                                
+                                try {
+                                    courseCourrente = courses.get(choix - 1);
+                                    courseCourrente.commencer();
+                                } catch (TropTotException ex) {
+                                    System.out.println(ex.getMessage());
+                                }
+                                System.out.println("Course commencee avec succes");   
                             }
-    
-                            System.out.print("Choisir : \t");
-                            choix = Integer.parseInt(sc.nextLine()) - 1;
-                            
-                            if (choix < 1 || choix > courses.size()) {
-                                System.out.println("Reessayez !!!");
+                            else {
+                                int evaC;
+                                System.out.print("Evaluation du chauffeur : \t");
+                                evaC = Integer.parseInt(sc.nextLine());
+
+                                String commentaireC;
+                                System.out.print("Commentaire du chauffeur : \t");
+                                commentaireC = sc.nextLine();
+
+                                int[] evaP = new int[courseCourrente.getNbPassager()];
+                                
+                                ArrayList<String> commentairesP = new ArrayList<>();
+                                for(int i = 0; i < evaP.length; i++) {
+                                    System.out.print("Evaluation du passager " + (i + 1)+ " :\t");
+                                    evaP[i] = Integer.parseInt(sc.nextLine());
+                                    System.out.print("Commentaire du passager " + (i + 1)+ " :\t");
+                                    commentairesP.add(sc.nextLine());
+                                }
+                                
+                                try {
+                                    courseCourrente.terminer(evaC, evaP, commentaireC, commentairesP);
+                                } catch (EvaluationInvalideException | InvalidParameterSpecException ex) {
+                                    System.out.println(ex.getMessage());
+                                }
                             }
                         }
-                        
-                        courses.get(choix - 1).commencer();
-                        System.out.println("Course planifieee avec succes");
+
+                    }
+                    
+                    case 3 -> {
+                        break;
                     }
 
-                }
-
-                default -> {
+                    default -> {
+                        System.out.println("Choix invalide !!!");
+                    }
                 }
             }
         }

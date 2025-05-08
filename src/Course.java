@@ -129,13 +129,17 @@ public class Course implements Serializable {
         return maListe;
     }
 
-    public void commencer() {
+    public void commencer() throws TropTotException {
         File planifieeFile = new File("../FichiersDeSauvegarde/fichierCoursePlanifiee");
         File enCoursFile = new File("../FichiersDeSauvegarde/fichierCourseEnCours");
         
         ArrayList<Course> remainingCourses = new ArrayList<>();
         ArrayList<Course> coursesEnCours = new ArrayList<>();
         Course currentCourse = null;
+
+        if (LocalDateTime.now().isBefore(this.dateHeurePrevu)) {
+            throw new TropTotException("C'est pas encore l'heure");
+        }
 
         if (planifieeFile.exists() && planifieeFile.length() > 0) {
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(planifieeFile))) {
@@ -484,5 +488,9 @@ public class Course implements Serializable {
 
     public LocalDateTime getHeureDatePrevu() {
         return dateHeurePrevu;
+    }
+
+    public int getNbPassager() {
+        return passagers.size();
     }
 }
