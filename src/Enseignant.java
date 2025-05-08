@@ -15,7 +15,7 @@ public class Enseignant extends Utilisateur implements Serializable{
     public Enseignant(String nom, String prenom, String password, String mat,double repC, double repP,Faculte fac) throws MatriculeException, ReputationException, InvalidTypeException{
         super(nom, prenom, password, mat, repC, repP);
 
-        if (mat.charAt(4) != '1') {
+        if (mat.charAt(4) != '2') {
             throw new InvalidTypeException("Ce matricule ne correspand pas a un matricule d'enseignant");
         }
         

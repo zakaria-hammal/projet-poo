@@ -5,13 +5,15 @@ import java.util.ArrayList;
 
 public class Profil implements Serializable {
 
-    static Object Status;
     private Status status;
     private Point itenairairePassager;
     private ArrayList<Point> itenairaireChauffeur;
     private ArrayList<LocalDateTime>[] horaires;
     private TypeCourse typeCourse;
     private Preferences preferences;
+
+    public Profil() {
+    }
 
     public Profil(Status stat, Point itPass, ArrayList<Point> itChauf, ArrayList<LocalDateTime>[] hor, TypeCourse typeCourse, Preferences preferences) {
         this.status = stat;

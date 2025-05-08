@@ -341,7 +341,7 @@ public class Utilisateur implements Serializable {
         Utilisateur utilisateur;
         File file;
 
-        switch (matricule.charAt(0)) {
+        switch (matricule.charAt(4)) {
             case '0' -> { 
                 file = new File("../FichiersDeSauvegarde/fichierATS");
                 if(file.exists() && file.length() != 0) {

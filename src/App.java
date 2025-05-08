@@ -32,7 +32,7 @@ public class App {
                             System.out.println("Utilisateur introuvable\n Reesseyez!!!");
                         }
                         else {
-                            System.out.println("Bienvenue");
+                            System.out.println("Bienvenue " + utilisateur.getNom() + " " + utilisateur.getPrenom());
                         }
                     }
                     
@@ -116,6 +116,7 @@ public class App {
                                     utilisateur = new Enseignant(nom, prenom, password, mat, 2.5, 2.5, faculte);
                                     Enseignant.AjouterEnseignant((Enseignant) utilisateur);
                                     valid = 1;
+                                    System.out.println("Bienvenue " + utilisateur.getNom() + " " + utilisateur.getPrenom());
                                 } catch (MatriculeException | ReputationException | UtilisateurExistDeja | InvalidTypeException e) {
                                     System.out.println(e.getMessage());
                                 }
@@ -137,8 +138,26 @@ public class App {
                     System.out.println("Choix invalid !!!\nReessayer");
                 }
             }
+
         }
         
+        Profil profil = new Profil();
+        choix = 0;
+        System.out.println("Definir votre profil pour ajourd'hui : ");
+        while (choix != 1 && choix != 2) {
+            System.out.println("Vous etes un : \n1- Chauffeur\n2- Passager");
+            choix = Integer.parseInt(sc.nextLine());
 
+            if (choix != 1 && choix != 2) {
+                System.out.println("Reessayer !!!");
+            }
+        }
+        
+        if(choix == 1) {
+            profil.setStatus(Status.Chauffeur);
+        }
+        else {
+            profil.setStatus(Status.Passager);
+        }
     }
 }

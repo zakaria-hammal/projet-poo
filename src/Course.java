@@ -273,6 +273,14 @@ public class Course implements Serializable {
         return pointsArret;
     }
 
+    public Utilisateur getChauffeur() {
+        return this.chauffeur;
+    }
+
+    public ArrayList<Utilisateur> getPassagers() {
+        return this.passagers;
+    }
+
     public int getEvaluationChauffeur() {
         return evaluationChauffeur;
     }
