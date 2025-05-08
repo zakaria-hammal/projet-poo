@@ -178,7 +178,7 @@ public class App {
             }
         }
 
-        if (choix == 1) {
+        if (choixPref == 1) {
             pref.setAccepterGarcon(true);
         }
         else {
@@ -186,7 +186,8 @@ public class App {
         }
 
         System.out.println("Acceptez-vous des filles durant la course ?\n1-Oui\n2- Non");
-
+        
+        choixPref = 0;
         while (choixPref != 1 && choixPref != 2) {
             choixPref = Integer.parseInt(sc.nextLine());
 
@@ -195,7 +196,7 @@ public class App {
             }
         }
 
-        if (choix == 1) {
+        if (choixPref == 1) {
             pref.setAccepterFilles(true);
         }
         else {
@@ -204,6 +205,7 @@ public class App {
 
         System.out.println("Acceptez-vous de la musique durant la course ?\n1-Oui\n2- Non");
 
+        choixPref = 0;
         while (choixPref != 1 && choixPref != 2) {
             choixPref = Integer.parseInt(sc.nextLine());
 
@@ -212,7 +214,7 @@ public class App {
             }
         }
 
-        if (choix == 1) {
+        if (choixPref == 1) {
             pref.setAccepterMusique(true);
         }
         else {
@@ -221,6 +223,7 @@ public class App {
 
         System.out.println("Acceptez-vous des bagages durant la course ?\n1-Oui\n2- Non");
 
+        choixPref = 0;
         while (choixPref != 1 && choixPref != 2) {
             choixPref = Integer.parseInt(sc.nextLine());
 
@@ -229,7 +232,7 @@ public class App {
             }
         }
 
-        if (choix == 1) {
+        if (choixPref == 1) {
             pref.setAccepterBagages(true);
         }
         else {
@@ -247,7 +250,6 @@ public class App {
 
         if(choix == 1) {
             profil.setStatus(Status.Chauffeur);
-            choix = 0;
             int repet = 0;
             
             Point point;
@@ -255,11 +257,13 @@ public class App {
 
             System.out.println("Definir les points par lesquels vous allez passer :");
             while (repet == 0) {
+                choix = 0;
                 while (choix < 1 || choix > Point.values().length) {
                     for (Point elem : Point.values()) {
                         System.out.println(String.valueOf(elem.ordinal() + 1) + "- " + elem.toString());
-                        choix = Integer.parseInt(sc.nextLine());
                     }
+
+                    choix = Integer.parseInt(sc.nextLine());
     
                     if(choix < 1 || choix > Point.values().length) {
                         System.out.println("Reessayer");
@@ -275,6 +279,7 @@ public class App {
                 while (repet != 0 && repet != 1) {
                     repet = Integer.parseInt(sc.nextLine()) - 1;
                 }
+
             }
 
             profil.setItenairaireChauffeur(points);
@@ -286,8 +291,9 @@ public class App {
                 System.out.println("Votre type de course");
                 for (TypeCourse elem : TypeCourse.values()) {
                     System.out.println(String.valueOf(elem.ordinal() + 1) + "- " + elem.toString());
-                    choix = Integer.parseInt(sc.nextLine());
                 }
+
+                choix = Integer.parseInt(sc.nextLine());
 
                 if(choix < 1 || choix > TypeCourse.values().length) {
                     System.out.println("Reessayer");
@@ -314,7 +320,7 @@ public class App {
                     pourUnJour = new ArrayList<>();
 
                     while (choix == 1) {
-                        System.out.println("Pour le " + joursDeLaSemaine[i] + "1- Ajouter\n2-Jour Suivant");
+                        System.out.println("Pour le " + joursDeLaSemaine[i] + "\n1- Ajouter\n2-Jour Suivant");
                         choix = Integer.parseInt(sc.nextLine());
 
                         if(choix == 1) {
@@ -338,9 +344,9 @@ public class App {
                 System.out.println("Ou voulez vous qu'on vous recupere ?");
                 for (Point elem : Point.values()) {
                     System.out.println(String.valueOf(elem.ordinal() + 1) + "- " + elem.toString());
-                    choix = Integer.parseInt(sc.nextLine());
                 }
 
+                choix = Integer.parseInt(sc.nextLine());
                 if(choix < 1 || choix > Point.values().length) {
                     System.out.println("Reessayer");
                 }
