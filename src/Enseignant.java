@@ -41,21 +41,42 @@ public class Enseignant extends Utilisateur implements Serializable{
         this.fac = fac;
     }
 
-    public static void AjouterEnseignant(Enseignant x) throws UtilisateurExistDeja {
+    @Override
+    public void ajouterUtilisateur() throws UtilisateurExistDeja, UserBanException {
         ArrayList<Enseignant> teachers = new ArrayList<>();
-        File file = new File("FichiersDeSauvegarde/fichierEnseignant");
+        File file = new File("../FichiersDeSauvegarde/fichierEnseignant");
         
-        file.getParentFile().mkdirs();
+        File bannedUsersFile = new File("../FichiersDeSauvegatde/bannedUsers");
 
+        if(bannedUsersFile.exists() && bannedUsersFile.length() > 0) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bannedUsersFile))){
+                while (true) {
+                    try {
+                        Etudiant temp = (Etudiant) in.readObject();
+                        
+                        if (this.getMatricule().equals(temp.getMatricule())) {
+                            throw new UserBanException("Vous etes bannis");
+                        }
+
+                    } catch (EOFException e) {
+                        break;
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Erreur lecture fichier: " + e.getMessage());
+            }
+        }
         
         if (file.exists() && file.length() > 0) {
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
                 while (true) {
                     try {
                         Enseignant existing = (Enseignant) in.readObject();
-                        if (x.getMatricule().equals(existing.getMatricule())) {
+
+                        if (this.getMatricule().equals(existing.getMatricule())) {
                             throw new UtilisateurExistDeja("Utilisateur avec ce matricule existe déjà");
                         }
+                        
                         teachers.add(existing);
                     } catch (EOFException e) {
                         break;
@@ -67,7 +88,7 @@ public class Enseignant extends Utilisateur implements Serializable{
             }
         }
         
-        teachers.add(x);
+        teachers.add(this);
         
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
             for (Enseignant teacher : teachers) {
