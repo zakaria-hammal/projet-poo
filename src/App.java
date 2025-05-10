@@ -138,7 +138,7 @@ public class App {
                                     ((ATS) utilisateur).setServiceDeRattachement(service);
                                     ((ATS) utilisateur).ajouterUtilisateur(); // Note: chemin de fichier à vérifier
                                     valid = 1;
-                                } catch (MatriculeException | ReputationException | UserBanException | UtilisateurExistDeja e) {
+                                } catch (MatriculeException | ReputationException | UserBanException | UtilisateurExistDeja | InvalidTypeException e) {
                                     System.out.println(e.getMessage());
                                 }
                             }

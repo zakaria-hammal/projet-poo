@@ -1,3 +1,4 @@
+import com.sun.jdi.InvalidTypeException;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -7,8 +8,13 @@ public class ATS extends Utilisateur implements Serializable {
     private String ServiceDeRattachement;
 
     public ATS(String nom, String prenom, String password, String mat, double repC, double repP, String sdr)
-            throws MatriculeException, ReputationException {
+            throws MatriculeException, ReputationException, InvalidTypeException {
         super(nom, prenom, password, mat, repC, repP);
+
+        if (mat.charAt(4) != '1') {
+            throw new InvalidTypeException("Ce matricule ne correspand pas a un matricule d'enseignant");
+        }
+
         String temp = "";
 
         for (int i = 0; i < 4; i++) {

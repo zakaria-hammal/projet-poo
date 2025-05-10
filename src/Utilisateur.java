@@ -235,7 +235,7 @@ public abstract class Utilisateur implements Serializable {
         ArrayList<Utilisateur> temp = new ArrayList<>();
 
         switch (this.matricule.charAt(0)) {
-            case '0' -> { 
+            case '1' -> { 
                 in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
                 while (true) {
                     try {
@@ -256,31 +256,6 @@ public abstract class Utilisateur implements Serializable {
 
                 for (Utilisateur elem : temp) {
                     out.writeObject((ATS) elem);
-                }
-            }
-            
-            case '1' -> { 
-                in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
-
-                while (true) {
-                    try {
-                        utilisateur = (Etudiant) in.readObject();
-                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
-                            utilisateur.reputationPassager = this.reputationPassager;
-                            n++;
-                        }
-                        temp.add((Etudiant) utilisateur);
-                    } catch (EOFException e) {
-                        break;
-                    }
-                    
-                }
-
-                out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierEtudiant"));
-
-                for (Utilisateur elem : temp) {
-                    out.writeObject((Etudiant) elem);
                 }
             }
 
@@ -305,6 +280,31 @@ public abstract class Utilisateur implements Serializable {
 
                 for (Utilisateur elem : temp) {
                     out.writeObject((Enseignant) elem);
+                }
+            }
+            
+            case '3' -> { 
+                in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
+
+                while (true) {
+                    try {
+                        utilisateur = (Etudiant) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesPassager = this.nb_coursesPassager;
+                            utilisateur.reputationPassager = this.reputationPassager;
+                            n++;
+                        }
+                        temp.add((Etudiant) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+                    
+                }
+
+                out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierEtudiant"));
+
+                for (Utilisateur elem : temp) {
+                    out.writeObject((Etudiant) elem);
                 }
             }
 
