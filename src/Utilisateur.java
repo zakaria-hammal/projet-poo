@@ -34,7 +34,7 @@ public abstract class Utilisateur implements Serializable {
             }
         }
 
-        if (mat.charAt(4) != '0' && mat.charAt(4) != '1' && mat.charAt(4) != '2') {
+        if (mat.charAt(4) != '1' && mat.charAt(4) != '2' && mat.charAt(4) != '3') {
             throw new MatriculeException("Matricule Invalide : Type d'utilisateur introuvable");
         }
 
