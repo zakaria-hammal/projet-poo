@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class Utilisateur implements Serializable {
+public abstract class Utilisateur implements Serializable {
     private static int nb_utilisateur;
 
     private String password;
@@ -405,6 +405,8 @@ public class Utilisateur implements Serializable {
 
         return null;
     }
+
+    public abstract void ajouterUtilisateur() throws UtilisateurExistDeja, UserBanException;
 
     @Override
     public String toString() {

@@ -44,19 +44,42 @@ public class Etudiant extends Utilisateur implements Serializable {
         this.fac = fac;
     }
 
-    public static void ajouterEtudiant(Etudiant x) throws UtilisateurExistDeja {
+    @Override
+    public void ajouterUtilisateur() throws UtilisateurExistDeja, UserBanException {
         ArrayList<Etudiant> students = new ArrayList<>();
         File file = new File("../FichiersDeSauvegarde/fichierEtudiant");
         
-        
+        File bannedUsersFile = new File("../FichiersDeSauvegatde/bannedUsers");
+
+        if(bannedUsersFile.exists() && bannedUsersFile.length() > 0) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bannedUsersFile))){
+                while (true) {
+                    try {
+                        Etudiant temp = (Etudiant) in.readObject();
+                        
+                        if (this.getMatricule().equals(temp.getMatricule())) {
+                            throw new UserBanException("Vous etes bannis");
+                        }
+
+                    } catch (EOFException e) {
+                        break;
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Erreur lecture fichier: " + e.getMessage());
+            }
+        }
+
         if (file.exists() && file.length() > 0) {
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
                 while (true) {
                     try {
                         Etudiant existing = (Etudiant) in.readObject();
-                        if (x.getMatricule().equals(existing.getMatricule())) {
+
+                        if (this.getMatricule().equals(existing.getMatricule())) {
                             throw new UtilisateurExistDeja("Utilisateur avec ce matricule existe deja");
                         }
+                        
                         students.add(existing);
                     } catch (EOFException e) {
                         break;
@@ -64,13 +87,10 @@ public class Etudiant extends Utilisateur implements Serializable {
                 }
             } catch (IOException | ClassNotFoundException e) {
                 System.err.println("Erreur lecture fichier: " + e.getMessage());
-                throw new UtilisateurExistDeja("Erreur système - impossible d'ajouter l'étudiant");
             }
         }
         
-        
-        students.add(x);
-        
+        students.add(this);
         
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
             for (Etudiant student : students) {
@@ -78,7 +98,6 @@ public class Etudiant extends Utilisateur implements Serializable {
             }
         } catch (IOException e) {
             System.err.println("Erreur écriture fichier: " + e.getMessage());
-            throw new UtilisateurExistDeja("Erreur système - impossible d'enregistrer");
         }
     }
 }

@@ -44,23 +44,50 @@ public class ATS extends Utilisateur implements Serializable {
         return this.getMatricule().equals(e.getMatricule());
     }
 
-
-    public void ajouterATS(String filePath) throws ATSException {
+    @Override
+    public void ajouterUtilisateur() throws UtilisateurExistDeja, UserBanException {
+        String filePath = "../FichiersDeSauvegarde/fichierATS";
         File file = new File(filePath);
         ArrayList<ATS> existingATS = new ArrayList<>();
+
+        File bannedUsersFile = new File("../FichiersDeSauvegatde/bannedUsers");
+
+        if(bannedUsersFile.exists() && bannedUsersFile.length() > 0) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bannedUsersFile))){
+                while (true) {
+                    try {
+                        Etudiant temp = (Etudiant) in.readObject();
+                        
+                        if (this.getMatricule().equals(temp.getMatricule())) {
+                            throw new UserBanException("Vous etes bannis");
+                        }
+
+                    } catch (EOFException e) {
+                        break;
+                    }
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Erreur lecture fichier: " + e.getMessage());
+            }
+        }
 
         if (file.exists() && file.length() > 0) {
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
                 while (true) {
                     try {
                         ATS ats = (ATS) in.readObject();
+
+                        if (this.getMatricule().equals(ats.getMatricule())) {
+                            throw new UtilisateurExistDeja("Utilisateur avec ce matricule existe deja");
+                        }
+
                         existingATS.add(ats);
                     } catch (EOFException e) {
                         break;
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
-                throw new ATSException("Erreur lors de la lecture du fichier: " + e.getMessage());
+                System.err.println("Erreur écriture fichier: " + e.getMessage());
             }
         }
 
@@ -71,7 +98,7 @@ public class ATS extends Utilisateur implements Serializable {
                 out.writeObject(ats);
             }
         } catch (IOException e) {
-            throw new ATSException("Erreur lors de l'écriture dans le fichier: " + e.getMessage());
+            System.err.println("Erreur écriture fichier: " + e.getMessage());
         }
     }
 
