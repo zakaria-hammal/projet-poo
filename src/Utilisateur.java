@@ -131,8 +131,8 @@ public abstract class Utilisateur implements Serializable {
 
         ArrayList<Utilisateur> temp = new ArrayList<>();
 
-        switch (this.matricule.charAt(0)) {
-            case '0' -> { 
+        switch (this.matricule.charAt(4)) {
+            case '1' -> { 
                 in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
                 while (true) {
                     try {
@@ -153,31 +153,6 @@ public abstract class Utilisateur implements Serializable {
 
                 for (Utilisateur elem : temp) {
                     out.writeObject((ATS) elem);
-                }
-            }
-            
-            case '1' -> { 
-                in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
-
-                while (true) {
-                    try {
-                        utilisateur = (Etudiant) in.readObject();
-                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
-                            utilisateur.reputationChauffeur = this.reputationChauffeur;
-                            n++;
-                        }
-                        temp.add((Etudiant) utilisateur);
-                    } catch (EOFException e) {
-                        break;
-                    }
-                    
-                }
-
-                out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierEtudiant"));
-
-                for (Utilisateur elem : temp) {
-                    out.writeObject((Etudiant) elem);
                 }
             }
 
@@ -202,6 +177,31 @@ public abstract class Utilisateur implements Serializable {
 
                 for (Utilisateur elem : temp) {
                     out.writeObject((Enseignant) elem);
+                }
+            }
+            
+            case '3' -> { 
+                in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
+
+                while (true) {
+                    try {
+                        utilisateur = (Etudiant) in.readObject();
+                        if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                            utilisateur.nb_coursesChauffeur = this.nb_coursesChauffeur;
+                            utilisateur.reputationChauffeur = this.reputationChauffeur;
+                            n++;
+                        }
+                        temp.add((Etudiant) utilisateur);
+                    } catch (EOFException e) {
+                        break;
+                    }
+                    
+                }
+
+                out = new ObjectOutputStream(new FileOutputStream("../FichiersDeSauvegarde/fichierEtudiant"));
+
+                for (Utilisateur elem : temp) {
+                    out.writeObject((Etudiant) elem);
                 }
             }
 
@@ -234,7 +234,7 @@ public abstract class Utilisateur implements Serializable {
 
         ArrayList<Utilisateur> temp = new ArrayList<>();
 
-        switch (this.matricule.charAt(0)) {
+        switch (this.matricule.charAt(4)) {
             case '1' -> { 
                 in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
                 while (true) {
@@ -342,7 +342,7 @@ public abstract class Utilisateur implements Serializable {
         File file;
 
         switch (matricule.charAt(4)) {
-            case '0' -> { 
+            case '1' -> { 
                 file = new File("../FichiersDeSauvegarde/fichierATS");
                 if(file.exists() && file.length() != 0) {
                     in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierATS"));
@@ -351,26 +351,6 @@ public abstract class Utilisateur implements Serializable {
                             utilisateur = (ATS) in.readObject();
                             if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
                                 return (ATS) utilisateur;
-                            }
-                        } catch (EOFException e) {
-                            break;
-                        }
-                
-                    }
-                }
-
-                return null;
-            }
-        
-            case '1' -> {
-                file = new File("../FichiersDeSauvegarde/fichierEtudiant");
-                if(file.exists() && file.length() != 0) {
-                    in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
-                    while (true) {
-                        try {
-                            utilisateur = (Etudiant) in.readObject();
-                            if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
-                                return (Etudiant) utilisateur;
                             }
                         } catch (EOFException e) {
                             break;
@@ -401,6 +381,27 @@ public abstract class Utilisateur implements Serializable {
 
                 return null;
             }
+        
+            case '3' -> {
+                file = new File("../FichiersDeSauvegarde/fichierEtudiant");
+                if(file.exists() && file.length() != 0) {
+                    in = new ObjectInputStream(new FileInputStream("../FichiersDeSauvegarde/fichierEtudiant"));
+                    while (true) {
+                        try {
+                            utilisateur = (Etudiant) in.readObject();
+                            if (utilisateur.matricule.equals(matricule) && utilisateur.password.equals(password)) {
+                                return (Etudiant) utilisateur;
+                            }
+                        } catch (EOFException e) {
+                            break;
+                        }
+                
+                    }
+                }
+
+                return null;
+            }
+
         }
 
         return null;
