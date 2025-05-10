@@ -1,4 +1,6 @@
-
+/*
+ * Prepare par TRIBECHE Rayan / HAMMAL Zakaria
+ */
 
 import com.sun.jdi.InvalidTypeException;
 import java.io.*;
@@ -618,28 +620,39 @@ public class App {
             System.out.println("1- Rejoidre une course");
 
             courses = Course.getCoursesCompatible(utilisateur);
-            System.out.println("Voici la liste des courses qui sont compatibles avec vos exigences :");
-            for (int i = 0; i < courses.size(); i++) {
-                System.out.println(String.valueOf(i + 1) + "- Prévu le : " + courses.get(i).getHeureDatePrevu());
+            if (courses == null) {
+                System.out.println("Pas courses à rejoindre !!!");
             }
+            else {
+                System.out.println("Voici la liste des courses qui sont compatibles avec vos exigences :");
+                for (int i = 0; i < courses.size(); i++) {
+                    System.out.println(String.valueOf(i + 1) + "- Prévu le : " + courses.get(i).getHeureDatePrevu());
+                }
 
-            System.out.print("Choisir : \t");
-            choix = Integer.parseInt(sc.nextLine()) - 1;
+                System.out.print("Choisir : \t");
+                choix = -1;
+                while (choix < 0 || choix > courses.size()) {
+                    choix = Integer.parseInt(sc.nextLine()) - 1;
+                    
+                    if (choix < 0 || choix > courses.size()) {
+                        System.out.println("Reessayer");
+                    }
+                }
 
-            try {
-                courses.get(choix).ajouterPassager(utilisateur);
+                try {
+                    courses.get(choix).ajouterPassager(utilisateur);
 
-                System.out.println("Ajoute avec succes");
-            } catch (CourseCompleteException | EtatCourseInvalideException | StatutInvalideException ex) {
-                System.out.println(ex.getMessage());
-            } 
+                    System.out.println("Ajoute avec succes");
+                } catch (CourseCompleteException | EtatCourseInvalideException | StatutInvalideException ex) {
+                    System.out.println(ex.getMessage());
+                } 
+            }
+            
         }
 
 
 }
     
-    
-
     private static void afficherMenuATS(Scanner sc, ATS ats) {
         int choix = 0;
 
@@ -774,11 +787,6 @@ public class App {
         }
     }
 
-    /**
-     * Affiche la liste des ATS enregistrés dans le système
-     *
-     * @param ats L'utilisateur ATS
-     */
     public static void afficherATS(Utilisateur ats) {
         if (!verifierATS(ats)) return;
 

@@ -1,3 +1,7 @@
+/*
+ * Prepare par BOUDJEMAA Wassim
+ */
+
 import com.sun.jdi.InvalidTypeException;
 import java.io.EOFException;
 import java.io.File;
@@ -41,6 +45,7 @@ public class Enseignant extends Utilisateur implements Serializable{
         this.fac = fac;
     }
 
+    // Corrigee par HAMMAL Zakaria
     @Override
     public void ajouterUtilisateur() throws UtilisateurExistDeja, UserBanException {
         ArrayList<Enseignant> teachers = new ArrayList<>();

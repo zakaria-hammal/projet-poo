@@ -1,3 +1,6 @@
+/*
+ * Prepare par DJEHA Youunes
+ */
 
 import java.io.EOFException;
 import java.io.File;
@@ -39,7 +42,8 @@ public class Course implements Serializable {
         this.pointsArret = chauffeur.getProfil().getItenairaireChauffeur();
         this.etat = Etat.PLANIFIEE;
     }
-
+    
+    // Corrige par Zakaria HAMMAL
     public void plannifiee() throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(
                 new FileOutputStream("../FichiersDeSauvegarde/fichierCoursePlanifiee", true))) {
@@ -97,7 +101,6 @@ public class Course implements Serializable {
         }
     }
     
-
     public static ArrayList<Course> getCoursesCompatible(Utilisateur passager) {
         ArrayList<Course> maListe = new ArrayList<>();
         File file = new File("../FichiersDeSauvegarde/fichierCoursePlanifiee");
@@ -129,7 +132,9 @@ public class Course implements Serializable {
         return maListe;
     }
 
+    // Corrige par Zakaria HAMMAL
     public void commencer() throws TropTotException {
+        this.etat = Etat.EN_COURS;
         File planifieeFile = new File("../FichiersDeSauvegarde/fichierCoursePlanifiee");
         File enCoursFile = new File("../FichiersDeSauvegarde/fichierCourseEnCours");
         
@@ -200,7 +205,9 @@ public class Course implements Serializable {
         }
     }
 
+    // Corrige par Zakaria HAMMAL
     public void terminer(int evaluationC, int[] evaluationsP, String commentaireChauffeur, ArrayList<String> commentairesPassagers) throws InvalidParameterSpecException, EvaluationInvalideException {
+        this.etat = Etat.TERMINEE;
         if(this.passagers.size() != evaluationsP.length || this.passagers.size() != commentairesPassagers.size()) {
             throw new InvalidParameterSpecException("Le nombre d'evaluations et / ou commentaire ne correspand pas au nombre de passagers");
         }

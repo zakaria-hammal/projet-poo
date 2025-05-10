@@ -1,3 +1,7 @@
+/*
+ * Preparee par BOUDJEMAA Wassim
+ */
+
 import com.sun.jdi.InvalidTypeException;
 import java.io.*;
 import java.util.ArrayList;
@@ -44,6 +48,7 @@ public class Etudiant extends Utilisateur implements Serializable {
         this.fac = fac;
     }
 
+    // Corrigee par HAMMAL Zakaria
     @Override
     public void ajouterUtilisateur() throws UtilisateurExistDeja, UserBanException {
         ArrayList<Etudiant> students = new ArrayList<>();
