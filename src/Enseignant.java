@@ -14,8 +14,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Enseignant extends Utilisateur implements Serializable{
-    Faculte fac;
-    int annee;
+    private Faculte fac;
+    private int annee;
+    
     public Enseignant(String nom, String prenom, String password, String mat,double repC, double repP,Faculte fac) throws MatriculeException, ReputationException, InvalidTypeException{
         super(nom, prenom, password, mat, repC, repP);
 

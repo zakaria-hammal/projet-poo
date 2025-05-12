@@ -7,9 +7,9 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class Etudiant extends Utilisateur implements Serializable {
-    int anneeAdmistion;
-    Faculte fac;
-    String specialite;
+    private int anneeAdmistion;
+    private Faculte fac;
+    private String specialite;
 
     public Etudiant(String nom, String prenom, String password, String mat, double repC, double repP, Faculte fac, String specialite) throws MatriculeException, ReputationException, InvalidTypeException {
         super(nom, prenom, password, mat, repC, repP);
