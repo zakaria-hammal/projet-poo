@@ -14,8 +14,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public abstract class Utilisateur implements Serializable {
-    private static int nb_utilisateur;
-
     private String password;
     private String nom;
     private String prenom;
@@ -25,6 +23,33 @@ public abstract class Utilisateur implements Serializable {
     private Profil profil;
     private int nb_coursesChauffeur = 0;
     private int nb_coursesPassager = 0;
+
+    public Utilisateur(String nom, String prenom, String password, String mat) throws MatriculeException {
+        if (mat.length() == 0 || mat.length() != 13) {
+            throw new MatriculeException("Taille du matricule invalide");
+        }
+
+        for (int i = 0; i < 13; i++) {
+            if ((mat.charAt(i) > '9') || (mat.charAt(i) < '0')) {
+                throw new MatriculeException("Matricule Invalide : Matricule contient des caracteres interdits");
+            }
+        }
+
+        if (mat.charAt(4) != '1' && mat.charAt(4) != '2' && mat.charAt(4) != '3') {
+            throw new MatriculeException("Matricule Invalide : Type d'utilisateur introuvable");
+        }
+
+        int annee = Integer.parseInt(String.valueOf(mat.charAt(1)) + mat.charAt(2) + mat.charAt(3) + mat.charAt(4));
+
+        if (annee > LocalDate.now().getYear()) {
+            throw new MatriculeException("Matricule Invalide : Annee de recutement ne peut pas dépasser l'annee actuelle");
+        }
+
+        this.nom = nom;
+        this.prenom = prenom;
+        this.password = password;
+        this.matricule = mat;
+    }
 
     public Utilisateur(String nom, String prenom, String password, String mat, double repC, double repP) throws MatriculeException, ReputationException {
         if (mat.length() == 0 || mat.length() != 13) {
@@ -91,10 +116,6 @@ public abstract class Utilisateur implements Serializable {
 
     public Profil getProfil() {
         return this.profil;
-    }
-
-    public static int getNb_utilisateur() {
-        return nb_utilisateur;
     }
 
     public int getNb_courses() {
