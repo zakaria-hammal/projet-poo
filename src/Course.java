@@ -1,5 +1,6 @@
 /*
  * Prepare par DJEHA Youunes
+ * Gestion des fichiers : HAMMAL Zakaria
  */
 
 import java.io.EOFException;
@@ -28,9 +29,13 @@ public class Course implements Serializable {
     private String commentaireChauffeur;
     private ArrayList<String> commentairesPassagers;
 
-    public Course(Utilisateur chauffeur, LocalDateTime dateHeurePrevu) throws StatutInvalideException {
+    public Course(Utilisateur chauffeur, LocalDateTime dateHeurePrevu) throws StatutInvalideException, TropTardException {
         if (chauffeur.getProfil().getStatus() != Status.Chauffeur) {
             throw new StatutInvalideException("L'utilisateur doit être un chauffeur pour créer une course");
+        }
+
+        if(dateHeurePrevu.isBefore(LocalDateTime.now())) {
+            throw new TropTardException("Temps Invalide");
         }
 
         this.chauffeur = chauffeur;
@@ -44,11 +49,47 @@ public class Course implements Serializable {
     }
     
     // Corrige par Zakaria HAMMAL
-    public void plannifiee() throws IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(
-                new FileOutputStream("../FichiersDeSauvegarde/fichierCoursePlanifiee", true))) {
-            out.writeObject(this);
+    public void plannifiee() throws IOException, CourseInvalide {
+        File file = new File("../FichiersDeSauvegarde/fichierCoursePlanifiee");
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            if (file.length() == 0) {
+                out.writeObject(this);
+                return;
+            }
         }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        ArrayList<Course> courses = new ArrayList<>();
+        Course course;
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+            while (true) {
+                try {
+                    course = (Course) in.readObject();
+                    if (this.chauffeur.getMatricule().equals(course.chauffeur.getMatricule()) && !this.dateHeurePrevu.isAfter(course.dateHeurePrevu.minusHours(2)) && !course.dateHeurePrevu.isAfter(this.dateHeurePrevu.minusHours(2))) {
+                        throw new CourseInvalide("Vous avez déjà des courses prévus dans ce temps");
+                    }
+                    courses.add(course);
+                } catch (EOFException e) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erreur de lecture des courses planifiees: " + e.getMessage());
+        }
+
+        courses.add(this);
+
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            for (Course elem : courses) {
+                out.writeObject(elem);
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
     }
 
     public void ajouterPassager(Utilisateur passager) throws StatutInvalideException, CourseCompleteException, EtatCourseInvalideException {
@@ -223,7 +264,7 @@ public class Course implements Serializable {
         this.commentaireChauffeur = commentaireChauffeur;
 
         try {
-            chauffeur.newRatingChauffeur(this, evaluationC);   
+            chauffeur.newRatingChauffeur(this, evaluationC);
         } catch (MatriculeException | UserNotFoundException | IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
             return;
@@ -312,7 +353,7 @@ public class Course implements Serializable {
     }
 
     public static ArrayList<Course> getCoursesPlanifiee() {
-        File file = new File("../fichierCoursePlanifiee");
+        File file = new File("../FichiersDeSauvegarde/fichierCoursePlanifiee");
 
         if (!file.exists() || file.length() == 0) {
             return null;
@@ -336,7 +377,7 @@ public class Course implements Serializable {
     }
     
     public static ArrayList<Course> getCoursesPlanifiee(Utilisateur chauffeur) {
-        File file = new File("../fichierCoursePlanifiee");
+        File file = new File("../FichiersDeSauvegarde/fichierCoursePlanifiee");
 
         if (!file.exists() || file.length() == 0) {
             return null;
@@ -365,7 +406,7 @@ public class Course implements Serializable {
     }
 
     public static ArrayList<Course> getCoursesEnCours() {
-        File file = new File("../fichierCourseEnCours");
+        File file = new File("../FichiersDeSauvegarde/fichierCourseEnCours");
 
         if (!file.exists() || file.length() == 0) {
             return null;
@@ -389,7 +430,7 @@ public class Course implements Serializable {
     }
     
     public static ArrayList<Course> getCoursesEnCours(Utilisateur chauffeur) {
-        File file = new File("../fichierCourseEnCours");
+        File file = new File("../FichiersDeSauvegarde/fichierCourseEnCours");
 
         if (!file.exists() || file.length() == 0) {
             return null;
@@ -417,7 +458,7 @@ public class Course implements Serializable {
     }
 
     public static ArrayList<Course> getCoursesTerminee() {
-        File file = new File("../fichierCourseTerminee");
+        File file = new File("../fichiersDeSauvegarde/fichierCourseTerminee");
 
         if (!file.exists() || file.length() == 0) {
             return null;
@@ -441,7 +482,7 @@ public class Course implements Serializable {
     }
     
     public static ArrayList<Course> getCoursesTerminee(Utilisateur chauffeur) {
-        File file = new File("../fichierCourseTerminee");
+        File file = new File("../FichiersDeSauvegarde/fichierCourseTerminee");
 
         if (!file.exists() || file.length() == 0) {
             return null;

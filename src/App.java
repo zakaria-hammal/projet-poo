@@ -8,6 +8,7 @@ import java.security.spec.InvalidParameterSpecException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -182,7 +183,7 @@ public class App {
                             System.out.println("Utilisateur introuvable\n Reesseyez!!!");
                         }
                         else {
-                            System.out.println("Bienvenue");
+                            System.out.println("Bienvenue " + utilisateur.getNom() + " " + utilisateur.getPrenom());
                             // Si l'utilisateur est un ATS, afficher le menu ATS
                             if (utilisateur instanceof ATS) {
                                 afficherMenuATS(sc, (ATS) utilisateur);
@@ -314,7 +315,11 @@ public class App {
         System.out.println("Definir votre profil pour ajourd'hui : ");
         while (choix != 1 && choix != 2) {
             System.out.println("Vous etes un : \n1- Chauffeur\n2- Passager");
-            choix = Integer.parseInt(sc.nextLine());
+            try {
+                choix = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Entier Invalide");
+            }
 
             if (choix != 1 && choix != 2) {
                 System.out.println("Reessayer !!!");
@@ -325,10 +330,14 @@ public class App {
         int choixPref = 0;
 
         System.out.println("Preciser vos preferences : ");
-        System.out.println("Acceptez-vous des garçons durant la course ?\n1-Oui\n2- Non");
+        System.out.println("Acceptez-vous des garçons durant la course ?\n1- Oui\n2- Non");
 
         while (choixPref != 1 && choixPref != 2) {
-            choixPref = Integer.parseInt(sc.nextLine());
+            try {
+                choixPref = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Entier Invalide");
+            }
 
             if (choixPref != 1 && choixPref != 2) {
                 System.out.println("Reesseyer !!!");
@@ -342,7 +351,7 @@ public class App {
             pref.setAccepterGarcon(true);
         }
 
-        System.out.println("Acceptez-vous des filles durant la course ?\n1-Oui\n2- Non");
+        System.out.println("Acceptez-vous des filles durant la course ?\n1- Oui\n2- Non");
         
         choixPref = 0;
         while (choixPref != 1 && choixPref != 2) {
@@ -360,7 +369,7 @@ public class App {
             pref.setAccepterFilles(true);
         }
 
-        System.out.println("Acceptez-vous de la musique durant la course ?\n1-Oui\n2- Non");
+        System.out.println("Acceptez-vous de la musique durant la course ?\n1- Oui\n2- Non");
 
         choixPref = 0;
         while (choixPref != 1 && choixPref != 2) {
@@ -378,7 +387,7 @@ public class App {
             pref.setAccepterMusique(true);
         }
 
-        System.out.println("Acceptez-vous des bagages durant la course ?\n1-Oui\n2- Non");
+        System.out.println("Acceptez-vous des bagages durant la course ?\n1- Oui\n2- Non");
 
         choixPref = 0;
         while (choixPref != 1 && choixPref != 2) {
@@ -533,76 +542,89 @@ public class App {
                 switch (choix) {
                     case 1 -> {
                         LocalDateTime dateTime;
-                        System.out.print("Date et temps prevu : (dd/MM/yyyy HH:mm) \t");
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                        dateTime = LocalDateTime.parse(sc.nextLine(), formatter);
+
+                        while (true) {
+                            try {
+                                System.out.print("Date et temps prevu : (dd/MM/yyyy HH:mm) \t");
+                                dateTime = LocalDateTime.parse(sc.nextLine(), formatter);
+                                break;   
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Format invalide");
+                            }   
+                        }
 
                         try {
                             course = new Course(utilisateur, dateTime);
-                            course.plannifiee();
+                            try {
+                                course.plannifiee();
+                            } catch (CourseInvalide ex) {
+                                System.out.println(ex.getMessage());
+                            }
 
                             System.out.println("Course planifieee avec succes");
-                        } catch (StatutInvalideException ex) {
+                        } catch (StatutInvalideException | TropTardException | IOException | DateTimeParseException ex) {
                             System.out.println(ex.getMessage());
                         }
                     }
                 
                     case 2 -> {
-                        courses = Course.getCoursesEnCours(utilisateur);
-                        
-                        if (courses.isEmpty()) {
-                            System.out.println("Vous n'avez pas de course planifiee");
+                        if (courseCourrente == null) {
+                            courses = Course.getCoursesPlanifiee(utilisateur);
+                            if(courses.isEmpty()) {
+                                System.out.println("Vous n'avez pas de courses planifiee");
+                            }
+
+                            choix = -1;
+                            while (choix < 0 || choix > courses.size()) { 
+                                for (int i = 0; i < courses.size(); i++) {
+                                    System.out.println(String.valueOf(i + 1) + "- Prévu le : " + courses.get(i).getHeureDatePrevu());
+                                }
+        
+                                System.out.print("Choisir : \t");
+                                choix = Integer.parseInt(sc.nextLine()) - 1;
+                                
+                                if (choix < 1 || choix > courses.size()) {
+                                    System.out.println("Reessayez !!!");
+                                }
+                            }
+                            
+                            try {
+                                courseCourrente = courses.get(choix);
+                                courseCourrente.commencer();
+                                System.out.println("Course commencee avec succes");  
+                            } catch (TropTotException ex) {
+                                System.out.println(ex.getMessage());
+                                courseCourrente = null;
+                            }
+                                
                         }
                         else {
-                            if (courseCourrente == null) {
-                                choix = 0;
-                                while (choix < 1 || choix > courses.size()) { 
-                                    for (int i = 0; i < courses.size(); i++) {
-                                        System.out.println(String.valueOf(i + 1) + "- Prévu le : " + courses.get(i).getHeureDatePrevu());
-                                    }
-            
-                                    System.out.print("Choisir : \t");
-                                    choix = Integer.parseInt(sc.nextLine()) - 1;
-                                    
-                                    if (choix < 1 || choix > courses.size()) {
-                                        System.out.println("Reessayez !!!");
-                                    }
-                                }
-                                
-                                try {
-                                    courseCourrente = courses.get(choix - 1);
-                                    courseCourrente.commencer();
-                                } catch (TropTotException ex) {
-                                    System.out.println(ex.getMessage());
-                                }
-                                System.out.println("Course commencee avec succes");   
+                            int evaC;
+                            System.out.print("Evaluation du chauffeur : \t");
+                            evaC = Integer.parseInt(sc.nextLine());
+
+                            String commentaireC;
+                            System.out.print("Commentaire du chauffeur : \t");
+                            commentaireC = sc.nextLine();
+
+                            int[] evaP = new int[courseCourrente.getNbPassager()];
+                            
+                            ArrayList<String> commentairesP = new ArrayList<>();
+                            for(int i = 0; i < evaP.length; i++) {
+                                System.out.print("Evaluation du passager " + (i + 1)+ " :\t");
+                                evaP[i] = Integer.parseInt(sc.nextLine());
+                                System.out.print("Commentaire du passager " + (i + 1)+ " :\t");
+                                commentairesP.add(sc.nextLine());
                             }
-                            else {
-                                int evaC;
-                                System.out.print("Evaluation du chauffeur : \t");
-                                evaC = Integer.parseInt(sc.nextLine());
-
-                                String commentaireC;
-                                System.out.print("Commentaire du chauffeur : \t");
-                                commentaireC = sc.nextLine();
-
-                                int[] evaP = new int[courseCourrente.getNbPassager()];
-                                
-                                ArrayList<String> commentairesP = new ArrayList<>();
-                                for(int i = 0; i < evaP.length; i++) {
-                                    System.out.print("Evaluation du passager " + (i + 1)+ " :\t");
-                                    evaP[i] = Integer.parseInt(sc.nextLine());
-                                    System.out.print("Commentaire du passager " + (i + 1)+ " :\t");
-                                    commentairesP.add(sc.nextLine());
-                                }
-                                
-                                try {
-                                    courseCourrente.terminer(evaC, evaP, commentaireC, commentairesP);
-                                } catch (EvaluationInvalideException | InvalidParameterSpecException ex) {
-                                    System.out.println(ex.getMessage());
-                                }
+                            
+                            try {
+                                courseCourrente.terminer(evaC, evaP, commentaireC, commentairesP);
+                            } catch (EvaluationInvalideException | InvalidParameterSpecException ex) {
+                                System.out.println(ex.getMessage());
                             }
                         }
+                        
 
                     }
                     
