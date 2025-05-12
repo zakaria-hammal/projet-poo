@@ -542,4 +542,12 @@ public class Course implements Serializable {
     public int getNbPassager() {
         return passagers.size();
     }
+
+    public int[] getEvaluationsPassagers() {
+        return evaluationsPassagers;
+    }
+
+    public ArrayList<String> getCommentairesPassagers() {
+        return commentairesPassagers;
+    }
 }

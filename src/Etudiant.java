@@ -11,6 +11,24 @@ public class Etudiant extends Utilisateur implements Serializable {
     private Faculte fac;
     private String specialite;
 
+    public Etudiant(String nom, String prenom, String password, String mat,  Faculte fac, String specialite) throws MatriculeException, ReputationException, InvalidTypeException {
+        super(nom, prenom, password, mat);
+
+        if (mat.charAt(4) != '3') {
+            throw new InvalidTypeException("Ce matricule ne correspand pas a un matricule d'etudiant");
+        }
+        
+        String temp = "";
+
+        for (int i = 0; i < 4; i++) {
+            temp = temp + mat.charAt(i);
+        }
+        
+        this.anneeAdmistion = Integer.parseInt(temp);
+        this.specialite = specialite;
+        this.fac=fac;
+    }
+
     public Etudiant(String nom, String prenom, String password, String mat, double repC, double repP, Faculte fac, String specialite) throws MatriculeException, ReputationException, InvalidTypeException {
         super(nom, prenom, password, mat, repC, repP);
 
@@ -40,6 +58,7 @@ public class Etudiant extends Utilisateur implements Serializable {
     public Faculte getFaculte(){
         return this.fac;
     }
+    
     public void setSpecialite(String specialite) {
         this.specialite = specialite;
     }
