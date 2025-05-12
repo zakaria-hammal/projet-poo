@@ -56,10 +56,6 @@ public class ATS extends Utilisateur implements Serializable {
         return this.ServiceDeRattachement;
     }
 
-    public void setAnneeDeRecrutement(int adr) {
-        this.AnneeDeRecrutement = adr;
-    }
-
     public void setServiceDeRattachement(String sdr) {
         this.ServiceDeRattachement = sdr;
     }
