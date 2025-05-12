@@ -1,7 +1,6 @@
 # 🚗 Projet POO: Système de Covoiturage Universitaire
 
 [![Java](https://img.shields.io/badge/Java-17%2B-blue?logo=openjdk)](https://openjdk.org/)
-[![License](https://img.shields.io/badge/License-MIT-green)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/zakaria-hammal/projet-poo?style=social)](https://github.com/zakaria-hammal/projet-poo/stargazers)
 
 Un système de covoiturage conçu pour la communauté universitaire, implémentant les principes de POO avec Java.

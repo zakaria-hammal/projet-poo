@@ -276,15 +276,16 @@ public class Course implements Serializable {
                     throw new EvaluationInvalideException();
                 }
 
-                this.evaluationsPassagers[i] = evaluationsP[i];
                 this.passagers.get(i).newRatingPassager(this, evaluationsP[i]);
-                this.commentairesPassagers.set(i, commentairesPassagers.get(i));
             } catch (MatriculeException | UserNotFoundException | IOException | ClassNotFoundException e) {
                 System.out.println(e.getMessage());
                 return;
             }
             
         }
+
+        this.evaluationsPassagers = evaluationsP;
+        this.commentairesPassagers = commentairesPassagers;
 
         File enCoursFile = new File("../FichiersDeSauvegarde/fichierCourseEnCours");
         File termineeFile = new File("../FichiersDeSauvegarde/fichierCourseTerminee");
